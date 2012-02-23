@@ -1,7 +1,12 @@
 package com.zero.objects;
 
+import java.io.IOException;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.openal.Audio;
+import org.newdawn.slick.openal.AudioLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 public class Bullet extends Entity {
 	
@@ -11,6 +16,17 @@ public class Bullet extends Entity {
 	private Boolean visible = false;
 	
 	private int totalAliveTime = 0;
+	
+	private static Audio s = null;
+	
+	static {
+	   try {
+		   s = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/ding.ogg"));
+	    } catch (IOException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+	    }
+	}
 	
 	public Bullet(String ref) throws SlickException {
 		super(ref);
@@ -24,7 +40,7 @@ public class Bullet extends Entity {
 		this.setCenterOfRotation(this.getCenterOfRotationX(), rotationy);
 		
 		this.setRotation(source.getRotation());
-		
+		s.playAsSoundEffect(1.0f, 1.0f, false);
 		visible = true;
 		moving = true;
 	}
