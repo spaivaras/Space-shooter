@@ -122,10 +122,10 @@ public class Manager {
 	private void loadSounds() {
 		sounds = new HashMap<String, Audio>();
 		try {
-			Audio laserSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/laser.ogg"));
+			Audio laserSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("laser.ogg"));
 			sounds.put("laser", laserSound);
 			
-			Audio thrusterSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/thrust.ogg"));
+			Audio thrusterSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("thrust.ogg"));
 			sounds.put("thruster", thrusterSound);
 		} catch (IOException e) {
 			e.printStackTrace();
