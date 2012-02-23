@@ -15,13 +15,16 @@ package lessur.engine.physics;
 
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
-import org.jbox2d.common.*;
+import org.jbox2d.common.Color3f;
+import org.jbox2d.common.MathUtils;
+import org.jbox2d.common.OBBViewportTransform;
+import org.jbox2d.common.Transform;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.pooling.arrays.IntArray;
 import org.jbox2d.pooling.arrays.Vec2Array;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.geom.Polygon;
 
 public class Slick2dDebugDraw extends DebugDraw{

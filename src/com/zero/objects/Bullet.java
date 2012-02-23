@@ -1,15 +1,14 @@
 package com.zero.objects;
 
-import java.io.IOException;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.openal.Audio;
-import org.newdawn.slick.openal.AudioLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 public class Bullet extends Entity {
 	
+	public Bullet(String ref) throws SlickException {
+		super(ref, 0f, 0f);
+	}
+
 	public static final float BULLET_SPEED_FACTOR = 0.9f;
 	
 	private Boolean moving = false;
@@ -17,9 +16,6 @@ public class Bullet extends Entity {
 	
 	private int totalAliveTime = 0;
 	
-	public Bullet(String ref) throws SlickException {
-		super(ref);
-	}
 
 	public void shoot(Entity source) {
 		x = source.getX() + source.getWidth() / 2 - this.getWidth() / 2;
@@ -58,5 +54,11 @@ public class Bullet extends Entity {
 				manager.removeEntity(this);
 			}
 		}
+	}
+
+	@Override
+	public void createPhysicsBody() {
+		// TODO Auto-generated method stub
+		
 	}
 }
