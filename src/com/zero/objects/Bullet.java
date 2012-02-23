@@ -17,17 +17,6 @@ public class Bullet extends Entity {
 	
 	private int totalAliveTime = 0;
 	
-	private static Audio s = null;
-	
-	static {
-	   try {
-		   s = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/ding.ogg"));
-	    } catch (IOException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-	    }
-	}
-	
 	public Bullet(String ref) throws SlickException {
 		super(ref);
 	}
@@ -40,7 +29,9 @@ public class Bullet extends Entity {
 		this.setCenterOfRotation(this.getCenterOfRotationX(), rotationy);
 		
 		this.setRotation(source.getRotation());
-		s.playAsSoundEffect(1.0f, 1.0f, false);
+		
+		manager.playSound("laser", 4f, 1f, false);
+		
 		visible = true;
 		moving = true;
 	}

@@ -1,0 +1,6 @@
+.settings
+.classpath
+.project
+bin
+lib/jbox2d-library-2.1.2.2-javadoc.jar
+lib/jbox2d-library-2.1.2.2-sources.jar
