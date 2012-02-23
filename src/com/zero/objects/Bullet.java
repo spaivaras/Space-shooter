@@ -26,7 +26,7 @@ public class Bullet extends Entity {
 		
 		this.setRotation(source.getRotation());
 		
-		manager.playSound("laser", 4f, 1f, false);
+		manager.playSound("laser", 4f, 0.3f, false);
 		
 		visible = true;
 		moving = true;

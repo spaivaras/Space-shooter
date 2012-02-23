@@ -19,15 +19,13 @@ public class Plane extends Entity
 	public static final float ROTATE_SPEED_FACTOR = 0.3f;
 	public static final float FLY_SPEED_FACTOR = 0.4f;
 	
-    public static final float THRUSTER_MAX = 1f;
-    public static final float THRUSTER_FACTOR = 0.1f;
-    public static final int THRUSTER_DELAY = 100;
+	//@TODO: TO IMPLEMENT MAX!
+	//public static final float THRUSTER_MAX = 1f;
+    public static final float THRUSTER_FACTOR = 7f;
+    public static final float REV_THRUSTER_FACTOR = 2f;
         
 	private Boolean shotDelayOn = false;
-    private Boolean thrustDelayOn = false;
 	int shotCounter = 0;
-    int thrustCounter = 0;
-    float thruster = 0f;
 
 	@Override
 	public void draw() {
@@ -50,35 +48,28 @@ public class Plane extends Entity
 			shotDelayOn = false;
 			shotCounter = 0;
 		}
-		if (thrustDelayOn && thrustCounter < THRUSTER_DELAY) {
-			thrustCounter += delta;
-		} else if(thrustDelayOn && thrustCounter >= THRUSTER_DELAY) {
-			thrustDelayOn = false;
-			thrustCounter = 0;
-		}
                     
 		if (input.isKeyDown(Input.KEY_A)) {
 			this.rotate(-ROTATE_SPEED_FACTOR * delta);
+			body.setTransform(body.getPosition(), getRotation());
 		}
 		if (input.isKeyDown(Input.KEY_D)) {
 			this.rotate(ROTATE_SPEED_FACTOR * delta);
+			body.setTransform(body.getPosition(), getRotation());
 		}
 		
-		if (input.isKeyDown(Input.KEY_W) && !thrustDelayOn) {
-			thrustDelayOn = true;
-			if(thruster < THRUSTER_MAX) {
-				thruster += THRUSTER_FACTOR;
-			}
+		if (input.isKeyDown(Input.KEY_W)) {
+			body.applyLinearImpulse(getThrustVector(false), new Vec2(0,0));
+			manager.playSoundIfNotStarted("thruster", 1f, 0.2f, true);
+		} else if(input.isKeyPressed(Input.KEY_W)) {
+			manager.stopSound("thruster");
 		}
 		
-		if(input.isKeyDown(Input.KEY_S) && !thrustDelayOn) {
-			thrustDelayOn = true;
-			if(thrustDelayOn && thruster > 0f) {
-				thruster -= THRUSTER_FACTOR;
-				if(thruster < 0f) {
-					thruster = 0;
-				}
-			}
+		if(input.isKeyDown(Input.KEY_S)) {
+			body.applyLinearImpulse(getThrustVector(true), new Vec2(0,0));
+			manager.playSoundIfNotStarted("thruster", 3f, 0.1f, true);
+		} else if(input.isKeyPressed(Input.KEY_S)) {
+			manager.stopSound("thruster");
 		}
 		
 		if (input.isKeyDown(Input.KEY_SPACE) && !shotDelayOn) {
@@ -86,47 +77,56 @@ public class Plane extends Entity
 				Bullet bullet = new Bullet("laser.png");
 				bullet.shoot(this);
 				manager.addEntity(bullet);
-				
 				shotDelayOn = true;
 			} catch (SlickException e) {
 				e.printStackTrace();
 			}
 		}
-        this.fly(delta);
-
+	}
+	
+	private Vec2 getThrustVector(Boolean reverse) {
+		double rads = Math.toRadians(body.getAngle() + 90);
+		
+		double factor;
+		if (reverse) {
+			factor = REV_THRUSTER_FACTOR;
+		} else {
+			factor = THRUSTER_FACTOR;
+		}
+		
+		//x + d * cos(a)  y + d.sin(a)
+		double x = factor * Math.cos(rads);
+		double y = factor * Math.sin(rads);
+		
+		Vec2 vector = new Vec2((float)-x, (float)y);
+		if (reverse) {
+			return vector.mul(-1f);
+		}
+		
+		return vector; 
 	}
         
-        public void fly(int delta) {
-            float hip = thruster * FLY_SPEED_FACTOR * delta;
-            float rotation = this.getRotation();
-
-            x += (float)(hip * Math.sin(Math.toRadians(rotation)));
-            y -= (float)(hip * Math.cos(Math.toRadians(rotation)));
-        }
-
+    //Create physic based structures, body, shape, fixture
+    //and registers physics body to physics world
+	@Override
+	public void createPhysicsBody() {
+		bodyDef = new BodyDef();
+		bodyDef.position = manager.translateCoordsToWorld(x, y);
+		bodyDef.type = BodyType.DYNAMIC;
+		
+		shape = new CircleShape();
+        shape.m_radius = 61f;
         
-        //Create physic based structures, body, shape, fixture
-        //and registers physics body to physics world
-		@Override
-		public void createPhysicsBody() {
-			bodyDef = new BodyDef();
-			bodyDef.position = manager.translateCoordsToWorld(x, y);
-			bodyDef.type = BodyType.DYNAMIC;
-			
-			shape = new CircleShape();
-	        shape.m_radius = 61f;
-	        
-	        fixtureDef = new FixtureDef();
-	        fixtureDef.shape = shape;
-	        fixtureDef.density = 0.5f;
-	        fixtureDef.friction = 0.5f;
-	        fixtureDef.restitution = 0.5f;
-	        
-	        body = manager.getWorld().createBody(bodyDef);
-	        body.createFixture(fixtureDef);
-	        body.setAngularVelocity(100);
-	        body.setAngularDamping(0.1f);
-	        body.setLinearVelocity(new Vec2(0, -10));
-	        body.setLinearDamping(0.0f);
-		}
+        fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.001f;
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 0f;
+        
+        body = manager.getWorld().createBody(bodyDef);
+        body.createFixture(fixtureDef);
+        body.setFixedRotation(true);
+        body.setLinearDamping(0.1f);
+        
+	}
 }

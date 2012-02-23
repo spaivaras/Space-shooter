@@ -25,13 +25,7 @@ public class Manager {
 	protected OBBViewportTransform transform;
 	
 	private Manager() {
-		sounds = new HashMap<String, Audio>();
-		try {
-			Audio laserSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/laser.ogg"));
-			sounds.put("laser", laserSound);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		loadSounds();
 	}
 	
 	public void render(GameContainer container, Graphics g) {
@@ -47,12 +41,11 @@ public class Manager {
 	}
 	
 	public void addEntity(Entity entity) {
-			entities.add(entity);
+		entities.add(entity);
 	}
 	
 	public void removeEntity(Entity entity) {
 		entities.remove(entity);
-		System.out.println("Remove entity: " + entity.toString());
 //		try {
 //			entity.destroy();
 //		} catch (SlickException e) {
@@ -64,6 +57,20 @@ public class Manager {
 		Audio temp = sounds.get(key);
 		if (temp != null) {
 			temp.playAsSoundEffect(pitch, gain, loop);
+		}
+	}
+	
+	public void playSoundIfNotStarted(String key, Float pitch, Float gain, Boolean loop) {
+		Audio temp = sounds.get(key);
+		if (temp != null && !temp.isPlaying()) {
+			temp.playAsSoundEffect(pitch, gain, loop);
+		}
+	}
+	
+	public void stopSound(String key) {
+		Audio temp = sounds.get(key);
+		if (temp != null && temp.isPlaying()) {
+			temp.stop();
 		}
 	}
 	
@@ -110,5 +117,18 @@ public class Manager {
 		center.y -= offsetY;
 		
 		return center;
+	}
+	
+	private void loadSounds() {
+		sounds = new HashMap<String, Audio>();
+		try {
+			Audio laserSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/laser.ogg"));
+			sounds.put("laser", laserSound);
+			
+			Audio thrusterSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/thrust.ogg"));
+			sounds.put("thruster", thrusterSound);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
