@@ -12,5 +12,11 @@ Controls:
 --==----===----===----==--
 Info:  
   Latest build in build folder
+  
+  At the moment lasers behave like solid objects, not light. 
+  There is no damage, and ships are impenetrable.
+  Latest build just to check physics in more than 1 model, as well as increased polygon count
+  and fast moving bodies
+
 --==----===----===----==--
 
