@@ -1,64 +1,67 @@
 package com.zero.objects;
 
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 
 public class Bullet extends Entity {
 	
-	public Bullet(String ref) throws SlickException {
-		super(ref, 0f, 0f);
-	}
-
-	public static final float BULLET_SPEED_FACTOR = 0.9f;
-	
-	private Boolean moving = false;
-	private Boolean visible = false;
+	public static final float BULLET_SPEED_FACTOR = 7f;
+	public static final int ALIVE_TIME = 200;
 	
 	private int totalAliveTime = 0;
 	
-
-	public void shoot(Entity source) {
-		x = source.getX() + source.getWidth() / 2 - this.getWidth() / 2;
-		y = source.getY() - this.getHeight() + 10;
-		
-		Float rotationy = this.getHeight() + source.getCenterOfRotationY() - 10;
-		this.setCenterOfRotation(this.getCenterOfRotationX(), rotationy);
-		
-		this.setRotation(source.getRotation());
-		
+	public Bullet(String ref, Float x, Float y, Float angle) throws SlickException {
+		super(ref, x, y);
+		body.setTransform(body.getPosition(), angle);
 		manager.playSound("laser", 4f, 0.3f, false);
+	}
+	
+	public void updatePosition(GameContainer container, int delta) {
+		body.applyLinearImpulse(getThrustVector(), body.getWorldCenter());
 		
-		visible = true;
-		moving = true;
-	}
-	
-	public void draw() {
-		if (visible) {
-			super.draw(x, y);
-		}
-	}
-	
-	public void update(GameContainer container, int delta) {
-		if (moving) {
-			float hip = BULLET_SPEED_FACTOR * delta;
-			float rotation = this.getRotation();
-			
-			x += (float)(hip * Math.sin(Math.toRadians(rotation)));
-			y -= (float)(hip * Math.cos(Math.toRadians(rotation)));
-			
-			totalAliveTime += delta;
-			
-			if (totalAliveTime >= 500) {
-				this.moving = false;
-				this.visible = false;
-				manager.removeEntity(this);
-			}
+		totalAliveTime += delta;
+		
+		if (totalAliveTime >= ALIVE_TIME) {
+			manager.removeEntity(this);
 		}
 	}
 
+	private Vec2 getThrustVector() {
+		double rads = body.getAngle() + Math.toRadians(90);
+		
+		//x + d * cos(a)  y + d.sin(a)
+		double x = BULLET_SPEED_FACTOR * Math.cos(rads);
+		double y = BULLET_SPEED_FACTOR * Math.sin(rads);
+		
+		Vec2 vector = new Vec2((float)x, (float)y);
+		return vector.mul(-1f);
+	}
+	
 	@Override
 	public void createPhysicsBody() {
-		// TODO Auto-generated method stub
+		bodyDef = new BodyDef();
+		bodyDef.position = new Vec2(x, y);
+		bodyDef.type = BodyType.DYNAMIC;
+		body = manager.getWorld().createBody(bodyDef);
+	
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(5.5f, 25f);
+		  
+		fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+	    fixtureDef.density = 0.001f;
+	    fixtureDef.friction = 0f;
+	    fixtureDef.restitution = 0.0f;
+	    body.createFixture(fixtureDef);
 		
+        body.setLinearDamping(0.00f);
+        body.setAngularDamping(0.0f);
+        body.setFixedRotation(true);
+        body.setBullet(true);
 	}
 }

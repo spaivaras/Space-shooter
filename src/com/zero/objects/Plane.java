@@ -1,5 +1,6 @@
 package com.zero.objects;
 
+
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
@@ -13,9 +14,10 @@ public class Plane extends Entity
 {	
 	public Plane(String ref, Float x, Float y) throws SlickException {
 		super(ref, x, y);
+		angleDifference = 180;
 	}
 
-	public static final int SHOT_DELAY = 100;
+	public static final int SHOT_DELAY = 200;
 	public static final float ROTATE_SPEED_FACTOR = 0.03f;
 	
 	//@TODO: TO IMPLEMENT MAX!
@@ -27,17 +29,7 @@ public class Plane extends Entity
 	int shotCounter = 0;
 
 	@Override
-	public void draw() {
-		this.draw(x, y);
-	}
-
-	@Override
-	public void update(GameContainer container, int delta) {
-		//Update sprite position from physics body position in the world
-		Vec2 bodyPosition = manager.translateCoordsToScreen(body.getPosition(), (float)(getWidth() / 2), (float)(getHeight() / 2));
-		x = bodyPosition.x;
-		y = bodyPosition.y;	
-		setRotation(-(float)Math.toDegrees(body.getAngle()) -180);
+	public void updatePosition(GameContainer container, int delta) {
 		
 		//Parse user input, shouldn't be here!
 		Input input = container.getInput();
@@ -49,41 +41,44 @@ public class Plane extends Entity
 		}
                     
 		if (input.isKeyDown(Input.KEY_A)) {
-			body.setTransform(body.getPosition(), body.getAngle() + ROTATE_SPEED_FACTOR);
+			body.applyAngularImpulse(50f);
 		}
 		if (input.isKeyDown(Input.KEY_D)) {
-			body.setTransform(body.getPosition(), body.getAngle() - ROTATE_SPEED_FACTOR);
+			body.applyAngularImpulse(-50f);
 		}
 		
 		if (input.isKeyDown(Input.KEY_W)) {
-			body.applyLinearImpulse(getThrustVector(false), new Vec2(0,0));
+			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
 			manager.playSoundIfNotStarted("thruster", 1f, 0.2f, true);
 		} else if(input.isKeyPressed(Input.KEY_W)) {
 			manager.stopSound("thruster");
 		}
 		
 		if(input.isKeyDown(Input.KEY_S)) {
-			body.applyLinearImpulse(getThrustVector(true), new Vec2(0,0));
+			body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
 			manager.playSoundIfNotStarted("thruster", 3f, 0.1f, true);
 		} else if(input.isKeyPressed(Input.KEY_S)) {
 			manager.stopSound("thruster");
 		}
 		
 		if (input.isKeyDown(Input.KEY_SPACE) && !shotDelayOn) {
-			try {
-				Bullet bullet = new Bullet("res/laser.png");
-				bullet.shoot(this);
-				manager.addEntity(bullet);
+			
+				Vec2 point = body.getWorldPoint(new Vec2(0, -88) );
+				
+				try {
+					Bullet box = new Bullet("res/laser.png", point.x, point.y, body.getAngle());
+					manager.addEntity(box);
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
+				
 				shotDelayOn = true;
-			} catch (SlickException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
 	private Vec2 getThrustVector(Boolean reverse) {
 		double rads = body.getAngle() + Math.toRadians(90);
-				
+		
 		double factor;
 		if (reverse) {
 			factor = REV_THRUSTER_FACTOR;
@@ -116,10 +111,8 @@ public class Plane extends Entity
 		
 		pp.parseEntity("plane", body);
 		
-        
-        body.setFixedRotation(true);
         body.setLinearDamping(0.05f);
+        body.setAngularDamping(0.2f);
         body.setTransform(body.getPosition(), (float)Math.toRadians(180));
-        
 	}
 }

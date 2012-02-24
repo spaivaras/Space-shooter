@@ -46,11 +46,11 @@ public class Manager {
 	
 	public void removeEntity(Entity entity) {
 		entities.remove(entity);
-//		try {
-//			entity.destroy();
-//		} catch (SlickException e) {
-//			e.printStackTrace();
-//		}
+		if (entity.getBody() != null) {
+			world.destroyBody(entity.getBody());
+		}
+		
+		System.out.println("Object destroyed: " + entity.toString());
 	}
 	
 	public void playSound(String key, Float pitch, Float gain, Boolean loop) {

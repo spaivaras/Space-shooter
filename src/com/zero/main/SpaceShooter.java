@@ -10,7 +10,9 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.zero.objects.DummyPlane;
 import com.zero.objects.Plane;
+import com.zero.objects.Walls;
 
 public class SpaceShooter extends BasicGame {
 
@@ -41,24 +43,32 @@ public class SpaceShooter extends BasicGame {
 		
 		//draw our sprites
 		manager.render(container, g);
+		
 	}
 
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		
 		sDD = new Slick2dDebugDraw(container.getGraphics(), container); // arg0 is the GameContainer in this case, I put this code in my init method
-		sDD.setFlags(0x0001); //Setting the debug draw flags,
+		sDD.setFlags(0x0011); //Setting the debug draw flags,
 		
 		Vec2 gravity = new Vec2(0.0f, 0.00f);
 		world = new World(gravity, true);
+		world.setWarmStarting(true);
 		world.setDebugDraw(sDD);
 		
 		manager = Manager.getInstance();
 		manager.setWorld(world);
 		manager.setContainer(container);
 		
-		plane = new Plane("res/plane.png", 400f, 300f);
+		plane = new Plane("res/plane.png", 200f, 200f);
 		manager.addEntity(plane);
+		
+		DummyPlane dummy = new DummyPlane("res/plane.png", 400f, 300f);
+		manager.addEntity(dummy);
+		
+		Walls walls = new Walls(container, manager);
+		walls.generateWalls();
 	}
 
 	@Override
@@ -89,13 +99,9 @@ public class SpaceShooter extends BasicGame {
 		AppGameContainer app = new AppGameContainer(new SpaceShooter());
 		
 		//change last parameter to true for full screen
-		app.setDisplayMode(800, 600, false);
-		
+		app.setDisplayMode(1024, 768, false);
 		//Lock to custom frame rate
 		app.setTargetFrameRate(200);
-		
-		//VSYNC will lock frame rate to monitor refresh rate if possible
-		//app.setVSync(true);
 		
 		app.start();
 	}
