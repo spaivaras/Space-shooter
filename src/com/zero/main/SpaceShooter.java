@@ -19,15 +19,15 @@ public class SpaceShooter extends BasicGame {
 	Slick2dDebugDraw sDD = null;
 	Plane plane;
 	
-	float FIXED_TIMESTEP = 1.0f / 10000.0f;
+	float FIXED_TIMESTEP = 1.0f / 1000.0f;
 	// Minimum remaining time to avoid box2d unstability caused by very small delta times
 	// if remaining time to simulate is smaller than this, the rest of time will be added to the last step,
 	// instead of performing one more single step with only the small delta time.
 	float MINIMUM_TIMESTEP = FIXED_TIMESTEP / 2;
-	int VELOCITY_ITERATIONS = 10;
-	int POSITION_ITERATIONS = 10;
+	int VELOCITY_ITERATIONS = 1;
+	int POSITION_ITERATIONS = 1;
 	// maximum number of steps per tick to avoid spiral of death
-	int MAXIMUM_NUMBER_OF_STEPS = 1000;
+	int MAXIMUM_NUMBER_OF_STEPS = 100;
 	
 	public SpaceShooter() {
 		super("Space shooter v0.0.1");
@@ -57,7 +57,7 @@ public class SpaceShooter extends BasicGame {
 		manager.setWorld(world);
 		manager.setContainer(container);
 		
-		plane = new Plane("plane.png", 400f, 300f);
+		plane = new Plane("res/plane.png", 400f, 300f);
 		manager.addEntity(plane);
 	}
 
@@ -89,7 +89,7 @@ public class SpaceShooter extends BasicGame {
 		AppGameContainer app = new AppGameContainer(new SpaceShooter());
 		
 		//change last parameter to true for full screen
-		app.setDisplayMode(1024, 768, false);
+		app.setDisplayMode(800, 600, false);
 		
 		//Lock to custom frame rate
 		app.setTargetFrameRate(200);
