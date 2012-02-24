@@ -19,15 +19,15 @@ public class SpaceShooter extends BasicGame {
 	Slick2dDebugDraw sDD = null;
 	Plane plane;
 	
-	float FIXED_TIMESTEP = 1.0f / 1200.0f;
-	   // Minimum remaining time to avoid box2d unstability caused by very small delta times
-	   // if remaining time to simulate is smaller than this, the rest of time will be added to the last step,
-	   // instead of performing one more single step with only the small delta time.
-	   float MINIMUM_TIMESTEP = FIXED_TIMESTEP / 2;
-	   int VELOCITY_ITERATIONS = 40;
-	   int POSITION_ITERATIONS = 40;
-	   // maximum number of steps per tick to avoid spiral of death
-	   int MAXIMUM_NUMBER_OF_STEPS = 25;
+	float FIXED_TIMESTEP = 1.0f / 10000.0f;
+	// Minimum remaining time to avoid box2d unstability caused by very small delta times
+	// if remaining time to simulate is smaller than this, the rest of time will be added to the last step,
+	// instead of performing one more single step with only the small delta time.
+	float MINIMUM_TIMESTEP = FIXED_TIMESTEP / 2;
+	int VELOCITY_ITERATIONS = 10;
+	int POSITION_ITERATIONS = 10;
+	// maximum number of steps per tick to avoid spiral of death
+	int MAXIMUM_NUMBER_OF_STEPS = 1000;
 	
 	public SpaceShooter() {
 		super("Space shooter v0.0.1");

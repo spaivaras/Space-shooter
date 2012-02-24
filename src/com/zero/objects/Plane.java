@@ -1,10 +1,11 @@
 package com.zero.objects;
 
-import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.pooling.arrays.Vec2Array;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -16,13 +17,12 @@ public class Plane extends Entity
 	}
 
 	public static final int SHOT_DELAY = 100;
-	public static final float ROTATE_SPEED_FACTOR = 0.3f;
-	public static final float FLY_SPEED_FACTOR = 0.4f;
+	public static final float ROTATE_SPEED_FACTOR = 0.03f;
 	
 	//@TODO: TO IMPLEMENT MAX!
 	//public static final float THRUSTER_MAX = 1f;
-    public static final float THRUSTER_FACTOR = 7f;
-    public static final float REV_THRUSTER_FACTOR = 2f;
+    public static final float THRUSTER_FACTOR = 1.5f;
+    public static final float REV_THRUSTER_FACTOR = 0.5f;
         
 	private Boolean shotDelayOn = false;
 	int shotCounter = 0;
@@ -38,7 +38,7 @@ public class Plane extends Entity
 		Vec2 bodyPosition = manager.translateCoordsToScreen(body.getPosition(), (float)(getWidth() / 2), (float)(getHeight() / 2));
 		x = bodyPosition.x;
 		y = bodyPosition.y;	
-		setRotation(body.getAngle());
+		setRotation(-(float)Math.toDegrees(body.getAngle()));
 		
 		//Parse user input, shouldn't be here!
 		Input input = container.getInput();
@@ -50,12 +50,10 @@ public class Plane extends Entity
 		}
                     
 		if (input.isKeyDown(Input.KEY_A)) {
-			this.rotate(-ROTATE_SPEED_FACTOR * delta);
-			body.setTransform(body.getPosition(), getRotation());
+			body.setTransform(body.getPosition(), body.getAngle() + ROTATE_SPEED_FACTOR);
 		}
 		if (input.isKeyDown(Input.KEY_D)) {
-			this.rotate(ROTATE_SPEED_FACTOR * delta);
-			body.setTransform(body.getPosition(), getRotation());
+			body.setTransform(body.getPosition(), body.getAngle() - ROTATE_SPEED_FACTOR);
 		}
 		
 		if (input.isKeyDown(Input.KEY_W)) {
@@ -85,8 +83,8 @@ public class Plane extends Entity
 	}
 	
 	private Vec2 getThrustVector(Boolean reverse) {
-		double rads = Math.toRadians(body.getAngle() + 90);
-		
+		double rads = body.getAngle() + Math.toRadians(90);
+				
 		double factor;
 		if (reverse) {
 			factor = REV_THRUSTER_FACTOR;
@@ -98,7 +96,7 @@ public class Plane extends Entity
 		double x = factor * Math.cos(rads);
 		double y = factor * Math.sin(rads);
 		
-		Vec2 vector = new Vec2((float)-x, (float)y);
+		Vec2 vector = new Vec2((float)x, (float)y);
 		if (reverse) {
 			return vector.mul(-1f);
 		}
@@ -113,20 +111,58 @@ public class Plane extends Entity
 		bodyDef = new BodyDef();
 		bodyDef.position = manager.translateCoordsToWorld(x, y);
 		bodyDef.type = BodyType.DYNAMIC;
-		
-		shape = new CircleShape();
-        shape.m_radius = 61f;
+		body = manager.getWorld().createBody(bodyDef);
+	
+		Vec2[] vertices = new Vec2Array().get(8);
+		PolygonShape shape1 = new PolygonShape();
+        vertices[0].set(new Vec2(-49, -11.5f));
+        vertices[1].set(new Vec2(-42, -34.5f));
+        vertices[2].set(new Vec2(-28, -57.5f));
+        vertices[3].set(new Vec2(19, -58.5f));
+        vertices[4].set(new Vec2(19, 7.5f));
+        vertices[5].set(new Vec2(-22, 8.5f));
+        shape1.set(vertices, 6);
+        
+        PolygonShape shape2 = new PolygonShape();
+        vertices[0].set(new Vec2(45, -9.5f));
+        vertices[1].set(new Vec2(19, 7.5f));
+        vertices[2].set(new Vec2(19, -58.5f));
+        vertices[3].set(new Vec2(45, -32.5f));
+        shape2.set(vertices, 4);
+        
+        PolygonShape shape3 = new PolygonShape();
+        vertices[0].set(new Vec2(19, 7.5f));
+        vertices[1].set(new Vec2(5, 61.5f));
+        vertices[2].set(new Vec2(-7, 61.5f));
+        vertices[3].set(new Vec2(-22, 8.5f));
+        shape3.set(vertices, 4);
+        
         
         fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
+        
+    
+        fixtureDef.shape = shape1;
         fixtureDef.density = 0.001f;
         fixtureDef.friction = 0f;
         fixtureDef.restitution = 0f;
-        
-        body = manager.getWorld().createBody(bodyDef);
         body.createFixture(fixtureDef);
+        
+        fixtureDef.shape = shape2;
+        fixtureDef.density = 0.001f;
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 0f;
+        body.createFixture(fixtureDef);
+        
+        fixtureDef.shape = shape3;
+        fixtureDef.density = 0.001f;
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 0f;
+        body.createFixture(fixtureDef);
+
+
+        
         body.setFixedRotation(true);
-        body.setLinearDamping(0.1f);
+        body.setLinearDamping(0.05f);
         
 	}
 }
