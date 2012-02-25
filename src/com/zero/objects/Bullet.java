@@ -1,13 +1,12 @@
 package com.zero.objects;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.zero.main.Manager;
 
 public class Bullet extends Entity {
@@ -18,14 +17,15 @@ public class Bullet extends Entity {
 	private int totalAliveTime = 0;
 	private Entity shooter = null;
 	
-	public Bullet(String ref, Float x, Float y, Float angle, Entity shooter) throws SlickException {
-		super(ref, x, y);
+	
+	public Bullet(TextureAtlas atlas, String name, Float x, Float y, Float angle, Entity shooter) {
+		super(atlas, name, x, y);
 		body.setTransform(body.getPosition(), angle);
 		manager.playSound("laser", 4f, 0.3f, false);
 		this.shooter = shooter;
 	}
 	
-	public void updatePosition(GameContainer container, int delta) {
+	public void updatePosition(float delta) {
 		body.applyLinearImpulse(getThrustVector(), body.getWorldCenter());
 		
 		totalAliveTime += delta;
@@ -35,39 +35,40 @@ public class Bullet extends Entity {
 		}
 	}
 
-	private Vec2 getThrustVector() {
+	private Vector2 getThrustVector() {
 		double rads = body.getAngle() + Math.toRadians(90);
 		
 		//x + d * cos(a)  y + d.sin(a)
 		double x = BULLET_SPEED_FACTOR * Math.cos(rads);
 		double y = BULLET_SPEED_FACTOR * Math.sin(rads);
 		
-		Vec2 vector = new Vec2((float)x, (float)y).mul(-1);
+		Vector2 vector = new Vector2((float)x, (float)y).mul(-1);
 		return vector;
 	}
 	
 	@Override
 	public void createPhysicsBody() {
-
 		bodyDef = new BodyDef();
-		bodyDef.position = new Vec2(x, y +  (this.height / Manager.PTM));
-		bodyDef.type = BodyType.DYNAMIC;
+		bodyDef.position.set(new Vector2(x, y +  (sprite.getHeight() / Manager.PTM)));
+		bodyDef.type = BodyType.DynamicBody;
 		body = manager.getWorld().createBody(bodyDef);
 	
 		PolygonShape shape = new PolygonShape();
 		
-		Float halfX = (float)this.getWidth() / Manager.PTM / 2;
-		Float halfY = (float)this.getHeight() / Manager.PTM / 2;
+		Float halfX = (float)sprite.getWidth() / Manager.PTM / 2;
+		Float halfY = (float)sprite.getHeight() / Manager.PTM / 2;
 		
 		shape.setAsBox(halfX, halfY);
 		  
-		fixtureDef = new FixtureDef();
+		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
 	    fixtureDef.density = 0.01f;
 	    fixtureDef.friction = 0f;
 	    fixtureDef.restitution = 0.0f;
 	    fixtureDef.isSensor = true;
 	    body.createFixture(fixtureDef);
+	    
+	    shape.dispose();
 		
         body.setLinearDamping(0f);
         body.setAngularDamping(0f);

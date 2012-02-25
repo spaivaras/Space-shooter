@@ -1,24 +1,22 @@
 package com.zero.main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.collision.Manifold;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.openal.Audio;
-import org.newdawn.slick.openal.AudioLoader;
-import org.newdawn.slick.util.ResourceLoader;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.Entity;
+
+
 
 public class Manager implements ContactListener {
 
@@ -28,22 +26,22 @@ public class Manager implements ContactListener {
 	private static Manager manager;
 	private CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
 	private ArrayList<Entity> needsToBeRemoved = new ArrayList<Entity>();
-	private HashMap<String, Audio> sounds;
+	private HashMap<String, Sound> sounds;
 	
 	protected World world = null;
-	protected GameContainer container = null;
+	protected SpriteBatch batch = null;
 	
 	private Manager() {
 		loadSounds();
 	}
 	
-	public void render(GameContainer container, Graphics g) {
+	public void render() {
 		for (Entity entity : entities) {
 			entity.draw();
 		}
 	}
 
-	public void update(GameContainer container, int delta) {
+	public void update(float delta) {
 		
 		for (Entity entity : needsToBeRemoved) {
 			removeEntity(entity);
@@ -52,7 +50,7 @@ public class Manager implements ContactListener {
 		needsToBeRemoved.clear();
 		
 		for (Entity entity : entities) {
-			entity.update(container, delta);
+			entity.update(delta);
 		}
 	}
 	
@@ -67,23 +65,25 @@ public class Manager implements ContactListener {
 		}
 	}
 	
-	public void playSound(String key, Float pitch, Float gain, Boolean loop) {
-		Audio temp = sounds.get(key);
+	public Sound playSound(String key, Float pitch, Float gain, Boolean loop) {
+		Sound temp = sounds.get(key);
 		if (temp != null) {
-			temp.playAsSoundEffect(pitch, gain, loop);
+			long id;
+			if (loop) {
+				id = temp.loop(gain);
+			} else {
+				id = temp.play(gain);
+			}
+			temp.setPitch(id, pitch);
 		}
+		
+		return temp;
 	}
 	
-	public void playSoundIfNotStarted(String key, Float pitch, Float gain, Boolean loop) {
-		Audio temp = sounds.get(key);
-		if (temp != null && !temp.isPlaying()) {
-			temp.playAsSoundEffect(pitch, gain, loop);
-		}
-	}
 	
 	public void stopSound(String key) {
-		Audio temp = sounds.get(key);
-		if (temp != null && temp.isPlaying()) {
+		Sound temp = sounds.get(key);
+		if (temp != null) {
 			temp.stop();
 		}
 	}
@@ -102,28 +102,20 @@ public class Manager implements ContactListener {
 	public void setWorld(World world) {
 		this.world = world;
 	}
-
-	public GameContainer getContainer() {
-		return container;
-	}
-
-	public void setContainer(GameContainer container) {
-		this.container = container;
-	}
 	
-	public Vec2 translateCoordsToWorld(Float x, Float y) {
-		Vec2 result = new Vec2(-(container.getWidth() / 2) + x,  container.getHeight() / 2 - y);
+	public Vector2 translateCoordsToWorld(Float x, Float y) {
+		Vector2 result = new Vector2(-(Gdx.graphics.getWidth() / 2) + x,  Gdx.graphics.getHeight() / 2 - y);
 		return result;
 	}
 	
-	public Vec2 translateCoordsToScreen(Vec2 coordWorld) {
-		Float screenX = coordWorld.x * PTM + (manager.getContainer().getWidth() / 2);
-		Float screenY = -coordWorld.y * PTM + (manager.getContainer().getHeight() / 2);
-        return new Vec2(screenX, screenY);
+	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
+		Float screenX = coordWorld.x * PTM + (Gdx.graphics.getWidth() / 2);
+		Float screenY = -coordWorld.y * PTM + (Gdx.graphics.getHeight() / 2);
+        return new Vector2(screenX, screenY);
 	}
 	
-	public Vec2 translateCoordsToScreen(Vec2 coordWorld, Float offsetX, Float offsetY) {
-		Vec2 center = translateCoordsToScreen(coordWorld);
+	public Vector2 translateCoordsToScreen(Vector2 coordWorld, Float offsetX, Float offsetY) {
+		Vector2 center = translateCoordsToScreen(coordWorld);
 		center.x -= offsetX;
 		center.y -= offsetY;
 		
@@ -131,20 +123,16 @@ public class Manager implements ContactListener {
 	}
 	
 	private void loadSounds() {
-		sounds = new HashMap<String, Audio>();
-		try {
-			Audio laserSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/laser.ogg"));
-			sounds.put("laser", laserSound);
-			
-			Audio thrusterSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/thrust.ogg"));
-			sounds.put("thruster", thrusterSound);
-			
-			Audio hitSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/hit.ogg"));
-			sounds.put("hit", hitSound);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sounds = new HashMap<String, Sound>();
+		
+		Sound laser = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/laser.ogg"));
+		sounds.put("laser", laser); 
+		
+		Sound thruster = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/thrust.ogg"));
+		sounds.put("thruster", thruster); 
+		
+		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/hit.ogg"));
+		sounds.put("hit", hit);
 	}
 
 	@Override
@@ -176,4 +164,12 @@ public class Manager implements ContactListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public void setBatch(SpriteBatch batch) {
+		this.batch = batch;
+	}
 }

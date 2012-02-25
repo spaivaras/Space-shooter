@@ -1,76 +1,75 @@
 package com.zero.objects;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
 public class Plane extends Entity 
 {	
-	public static final int SHOT_DELAY = 200;
+	public static final float SHOT_DELAY = 0.2f;
 	public static final float ROTATE_SPEED_FACTOR = 90f;
 	public static final float THRUSTER_FACTOR = 120f;
 	public static final float REV_THRUSTER_FACTOR = 50f;
 
 	private Boolean shotDelayOn = false;
-	int shotCounter = 0;
-
-	public Plane(String ref, Float x, Float y) throws SlickException {
-		super(ref, x, y);
+	float shotCounter = 0;
+	Sound thrusterSound = null;
+	Sound revThrusterSound = null;
+	
+	public Plane(TextureAtlas atlas, String name, Float x, Float y) {
+		super(atlas, name, x, y);
 		this.angleDifference = 180;
 	}
 
 	@Override
-	public void updatePosition(GameContainer container, int delta) {
-
-		//Parse user input, shouldn't be here!
-		Input input = container.getInput();
+	public void updatePosition(float delta) {
 		if (shotDelayOn && shotCounter < SHOT_DELAY) {
 			shotCounter += delta;
 		} else if(shotDelayOn && shotCounter >= SHOT_DELAY) {
 			shotDelayOn = false;
 			shotCounter = 0;
 		}
-
-		if (input.isKeyDown(Input.KEY_A)) {
+		
+		if(Gdx.input.isKeyPressed(Keys.W)) {
+			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
+			if (thrusterSound == null) {
+				thrusterSound = manager.playSound("thruster", 1f, 0.3f, true);
+			}
+		} else if(thrusterSound != null) {
+			thrusterSound.stop();
+			thrusterSound = null;
+		}
+		if(Gdx.input.isKeyPressed(Keys.S)) {
+			body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+			if (revThrusterSound == null) {
+				revThrusterSound = manager.playSound("thruster", 3f, 0.2f, true);
+			}
+		} else if(revThrusterSound != null) {
+			revThrusterSound.stop();
+			revThrusterSound = null;
+		}
+		
+		if(Gdx.input.isKeyPressed(Keys.A)) {
 			body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
 		}
-		if (input.isKeyDown(Input.KEY_D)) {
+		if(Gdx.input.isKeyPressed(Keys.D)) {
 			body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
 		}
-		if (input.isKeyDown(Input.KEY_W)) {
-			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
-			manager.playSoundIfNotStarted("thruster", 1f, 0.2f, true);
-		} else if(input.isKeyPressed(Input.KEY_W)) {
-			manager.stopSound("thruster");
-		}
-
-		if(input.isKeyDown(Input.KEY_S)) {
-			body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
-			manager.playSoundIfNotStarted("thruster", 3f, 0.1f, true);
-		} else if(input.isKeyPressed(Input.KEY_S)) {
-			manager.stopSound("thruster");
-		}
-
-		if (input.isKeyDown(Input.KEY_SPACE) && !shotDelayOn) {
-			Vec2 point = body.getWorldPoint(new Vec2(0, 0-((float)this.height / 2 / Manager.PTM)));
-
-			try {
-				Bullet box = new Bullet("res/laser.png", point.x, point.y, body.getAngle(), this);
-				manager.addEntity(box);
-			} catch (SlickException e) {
-				e.printStackTrace();
-			}
-			shotDelayOn = true;
+		if(Gdx.input.isKeyPressed(Keys.SPACE) && !shotDelayOn) {
+			shotDelayOn = true;	
+			Vector2 point = body.getWorldPoint(new Vector2(0, 0-((float)sprite.getHeight() / 2 / Manager.PTM)));
+			Bullet laser = new Bullet(atlas, "laser", point.x, point.y, body.getAngle(), this);
+			manager.addEntity(laser);					
 		}
 	}
 
-	private Vec2 getThrustVector(Boolean reverse) {
+	private Vector2 getThrustVector(Boolean reverse) {
 		double rads = body.getAngle() + Math.toRadians(270);
 		double factor;
 
@@ -84,7 +83,7 @@ public class Plane extends Entity
 		double x = factor * Math.cos(rads);
 		double y = factor * Math.sin(rads);
 
-		Vec2 vector = new Vec2((float)x, (float)y);
+		Vector2 vector = new Vector2((float)x, (float)y);
 		if (reverse) {
 			return vector.mul(-1f);
 		}
@@ -96,9 +95,9 @@ public class Plane extends Entity
 	//and registers physics body to physics world
 	@Override
 	public void createPhysicsBody() {
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.position = new Vec2(x, y);
-		bodyDef.type = BodyType.DYNAMIC;
+	    bodyDef = new BodyDef();
+		bodyDef.position.set(new Vector2(x, y));
+		bodyDef.type = BodyType.DynamicBody;
 		body = manager.getWorld().createBody(bodyDef);
 
 		PolygonParser pp = new PolygonParser();
