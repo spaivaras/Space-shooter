@@ -41,14 +41,14 @@ public class PolygonParser {
 						Node yNode = verticesList.item(j).getAttributes().item(1);
 						Float x = Float.valueOf(xNode.getNodeValue().trim()).floatValue();
 						Float y = Float.valueOf(yNode.getNodeValue().trim()).floatValue();
-						vertices[j].set(new Vec2(x, y));
+						vertices[j].set(new Vec2(x/32, y/32));
 					}
 
 					PolygonShape shape = new PolygonShape();
 					shape.set(vertices, verticesList.getLength());
 
 					fixtureDef.shape = shape;
-					fixtureDef.density = 0.001f;
+					fixtureDef.density = 600f;
 					fixtureDef.friction = 0f;
 					fixtureDef.restitution = 0.3f;
 					body.createFixture(fixtureDef);

@@ -22,14 +22,17 @@ public class Walls  {
 
 	public void generateWalls() {
 		BodyDef bodyDef = new BodyDef();
-		bodyDef.position = manager.translateCoordsToWorld(0f, (float)container.getHeight());
+		bodyDef.position.set(0f, 0f);
 		bodyDef.type = BodyType.STATIC;
 		Body body = manager.getWorld().createBody(bodyDef);
 	
+		Float halfX = (float)(container.getWidth()) / 2 / 32;
+		Float halfY = (float)(container.getHeight()) / 2 / 32;
+		
 		//Bottom
 		PolygonShape shape = new PolygonShape();
-		Vec2 v1 = new Vec2(0f, 0f);
-		Vec2 v2 = new Vec2(container.getWidth(), 0f);
+		Vec2 v1 = new Vec2(-halfX, -halfY);
+		Vec2 v2 = new Vec2(halfX, -halfY);
 		shape.setAsEdge(v1, v2);
 		
 		FixtureDef fixtureDef = new FixtureDef();
@@ -39,8 +42,8 @@ public class Walls  {
 		
 		//Ceiling
 		shape = new PolygonShape();
-		v1 = new Vec2(0f, container.getHeight());
-		v2 = new Vec2(container.getWidth(), container.getHeight());
+		v1 = new Vec2(-halfX, halfY);
+		v2 = new Vec2(halfX, halfY);
 		shape.setAsEdge(v1, v2);
 		
 		fixtureDef = new FixtureDef();
@@ -50,8 +53,8 @@ public class Walls  {
 		
 		//Right
 		shape = new PolygonShape();
-		v1 = new Vec2(container.getWidth(), 0f);
-		v2 = new Vec2(container.getWidth(), container.getHeight());
+		v1 = new Vec2(halfX, halfY);
+		v2 = new Vec2(halfX, -halfY);
 		shape.setAsEdge(v1, v2);
 		
 		fixtureDef = new FixtureDef();
@@ -61,8 +64,8 @@ public class Walls  {
 		
 		//Left
 		shape = new PolygonShape();
-		v1 = new Vec2(0f, 0f);
-		v2 = new Vec2(0f, container.getHeight());
+		v1 = new Vec2(-halfX, halfY);
+		v2 = new Vec2(-halfX, -halfY);
 		shape.setAsEdge(v1, v2);
 		
 		fixtureDef = new FixtureDef();

@@ -8,14 +8,15 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 
+import com.zero.main.Manager;
+
 public class Bullet extends Entity {
 	
-	public static final float BULLET_SPEED_FACTOR = 7f;
+	public static final float BULLET_SPEED_FACTOR = 0.1f;
 	public static final int ALIVE_TIME = 200;
 	
 	private int totalAliveTime = 0;
 	private Entity shooter = null;
-	private Boolean shouldDraw = false;
 	
 	public Bullet(String ref, Float x, Float y, Float angle, Entity shooter) throws SlickException {
 		super(ref, x, y);
@@ -24,17 +25,8 @@ public class Bullet extends Entity {
 		this.shooter = shooter;
 	}
 	
-	public void draw() {
-		if (shouldDraw) {
-			super.draw(x, y);
-		}
-	}
-	
 	public void updatePosition(GameContainer container, int delta) {
 		body.applyLinearImpulse(getThrustVector(), body.getWorldCenter());
-		if (!shouldDraw) {
-			shouldDraw = true;
-		}
 		
 		totalAliveTime += delta;
 		
@@ -50,33 +42,37 @@ public class Bullet extends Entity {
 		double x = BULLET_SPEED_FACTOR * Math.cos(rads);
 		double y = BULLET_SPEED_FACTOR * Math.sin(rads);
 		
-		Vec2 vector = new Vec2((float)x, (float)y);
-		return vector.mul(-1f);
+		Vec2 vector = new Vec2((float)x, (float)y).mul(-1);
+		return vector;
 	}
 	
 	@Override
 	public void createPhysicsBody() {
+
 		bodyDef = new BodyDef();
-		bodyDef.position = new Vec2(x, y);
+		bodyDef.position = new Vec2(x, y +  (this.height / Manager.PTM));
 		bodyDef.type = BodyType.DYNAMIC;
 		body = manager.getWorld().createBody(bodyDef);
 	
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(5.5f, 25f);
+		
+		Float halfX = (float)this.getWidth() / Manager.PTM / 2;
+		Float halfY = (float)this.getHeight() / Manager.PTM / 2;
+		
+		shape.setAsBox(halfX, halfY);
 		  
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-	    fixtureDef.density = 0.001f;
+	    fixtureDef.density = 0.01f;
 	    fixtureDef.friction = 0f;
 	    fixtureDef.restitution = 0.0f;
 	    fixtureDef.isSensor = true;
 	    body.createFixture(fixtureDef);
 		
-        body.setLinearDamping(0.00f);
-        body.setAngularDamping(0.0f);
+        body.setLinearDamping(0f);
+        body.setAngularDamping(0f);
         body.setFixedRotation(true);
         body.setBullet(true);
-        body.setUserData(this);
 	}
 
 	@Override
@@ -84,7 +80,6 @@ public class Bullet extends Entity {
 		if (with.equals(shooter)) {
 			return false;
 		}
-		
 		with.hit();
 		return true;
 	}

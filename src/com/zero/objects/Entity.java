@@ -21,7 +21,11 @@ public abstract class Entity extends Image {
 	protected Shape shape;
 	protected FixtureDef fixtureDef;
 	protected float angleDifference = 0;
+	protected Boolean shouldDraw = false;
 	
+	public Entity(String ref) throws SlickException {
+		super(ref);
+	}
 	
 	public Entity(String ref, Float x, Float y) 
 			throws SlickException {
@@ -30,6 +34,9 @@ public abstract class Entity extends Image {
 		this.x = x;
 		this.y = y;
 		createPhysicsBody();
+		if (body != null) {
+			body.setUserData(this);
+		}
 	}
 	
 	public abstract void createPhysicsBody();
@@ -38,19 +45,29 @@ public abstract class Entity extends Image {
 	public abstract void hit();
 	
 	public void update(GameContainer container, int delta) {
+		updatePosition(container, delta);
 		//Update sprite position from physics body position in the world
 		if (body != null) {
-			Vec2 bodyPosition = manager.translateCoordsToScreen(body.getPosition(), (float)(getWidth() / 2), (float)(getHeight() / 2));
-			x = bodyPosition.x;
-			y = bodyPosition.y;	
-			setRotation(-(float)Math.toDegrees(body.getAngle()) - angleDifference);
+			Vec2 position = body.getPosition();
+			x = position.x;
+			y = position.y;
+			
+			setRotation( (float)Math.toDegrees(  -body.getAngle()  ) + angleDifference  );
 		}
 		
-		updatePosition(container, delta);
+		if (!shouldDraw) {
+			shouldDraw = true;
+		}
 	}
 	
 	public void draw() {
-		super.draw(x, y);
+		if (shouldDraw) {
+			Vec2 screen = manager.translateCoordsToScreen(new Vec2(x, y), 
+					(float)this.getWidth() / 2, 
+					(float)this.getHeight() / 2);
+			
+			super.draw(screen.x, screen.y);
+		}
 	}
 	
 	public Float getX() {

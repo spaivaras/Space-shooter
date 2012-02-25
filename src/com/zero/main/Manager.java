@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
@@ -23,6 +22,9 @@ import com.zero.objects.Entity;
 
 public class Manager implements ContactListener {
 
+	//Pixel to meter ratio
+	public static final int PTM = 32;
+	
 	private static Manager manager;
 	private CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
 	private ArrayList<Entity> needsToBeRemoved = new ArrayList<Entity>();
@@ -30,7 +32,6 @@ public class Manager implements ContactListener {
 	
 	protected World world = null;
 	protected GameContainer container = null;
-	protected OBBViewportTransform transform;
 	
 	private Manager() {
 		loadSounds();
@@ -108,9 +109,6 @@ public class Manager implements ContactListener {
 
 	public void setContainer(GameContainer container) {
 		this.container = container;
-		transform = new OBBViewportTransform();
-	    transform.setYFlip(true);
-	    transform.setExtents(container.getWidth() / 2, container.getHeight() / 2);
 	}
 	
 	public Vec2 translateCoordsToWorld(Float x, Float y) {
@@ -119,9 +117,9 @@ public class Manager implements ContactListener {
 	}
 	
 	public Vec2 translateCoordsToScreen(Vec2 coordWorld) {
-		Vec2 screen = new Vec2();
-        transform.getWorldToScreen(coordWorld, screen);
-        return screen;
+		Float screenX = coordWorld.x * PTM + (manager.getContainer().getWidth() / 2);
+		Float screenY = -coordWorld.y * PTM + (manager.getContainer().getHeight() / 2);
+        return new Vec2(screenX, screenY);
 	}
 	
 	public Vec2 translateCoordsToScreen(Vec2 coordWorld, Float offsetX, Float offsetY) {
@@ -140,6 +138,10 @@ public class Manager implements ContactListener {
 			
 			Audio thrusterSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/thrust.ogg"));
 			sounds.put("thruster", thrusterSound);
+			
+			Audio hitSound = AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream("res/hit.ogg"));
+			sounds.put("hit", hitSound);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -152,18 +154,17 @@ public class Manager implements ContactListener {
 	@Override
 	public void endContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
-		if (a.getUserData() != null) {
-			System.out.println("Body A has a user data!! probably its a laser beam!! WHOOOFF");
-		}
-		
 		Body b = contact.getFixtureB().getBody();
-		if (b.getUserData() != null && a.getUserData() != null) {
+		
+		if (b.getUserData() != null 
+				&& a.getUserData() != null 
+				&& needsToBeRemoved.indexOf((Entity)b.getUserData()) == -1) {
+			
 			Entity caller = (Entity)b.getUserData();
 			Entity receiver = (Entity)a.getUserData();
-			
 			Boolean shouldRemove = caller.collision(receiver);
 			
-			if (shouldRemove && needsToBeRemoved.indexOf(caller) == -1) {
+			if (shouldRemove) {
 				needsToBeRemoved.add(caller);
 			}
 		}

@@ -1,7 +1,9 @@
 package com.zero.main;
 
+
 import lessur.engine.physics.Slick2dDebugDraw;
 
+import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.newdawn.slick.AppGameContainer;
@@ -26,10 +28,10 @@ public class SpaceShooter extends BasicGame {
 	// if remaining time to simulate is smaller than this, the rest of time will be added to the last step,
 	// instead of performing one more single step with only the small delta time.
 	float MINIMUM_TIMESTEP = FIXED_TIMESTEP / 2;
-	int VELOCITY_ITERATIONS = 10;
-	int POSITION_ITERATIONS = 10;
+	int VELOCITY_ITERATIONS = 1;
+	int POSITION_ITERATIONS = 1;
 	// maximum number of steps per tick to avoid spiral of death
-	int MAXIMUM_NUMBER_OF_STEPS = 100;
+	int MAXIMUM_NUMBER_OF_STEPS = 10;
 	
 	public SpaceShooter() {
 		super("Space shooter v0.0.1");
@@ -50,9 +52,16 @@ public class SpaceShooter extends BasicGame {
 	public void init(GameContainer container) throws SlickException {
 		
 		sDD = new Slick2dDebugDraw(container.getGraphics(), container); // arg0 is the GameContainer in this case, I put this code in my init method
-		sDD.setFlags(0x0000); //Setting the debug draw flags,
+		sDD.setCamera(0, 0, 32f);
 		
-		Vec2 gravity = new Vec2(0.0f, 0.00f);
+		sDD.setFlags(DebugDraw.e_shapeBit | 
+				DebugDraw.e_jointBit | 
+				DebugDraw.e_aabbBit | 
+				DebugDraw.e_pairBit | 
+				DebugDraw.e_centerOfMassBit | 
+				DebugDraw.e_dynamicTreeBit); //Setting the debug draw flags,
+		
+		Vec2 gravity = new Vec2(0f, 0f);
 		world = new World(gravity, true);
 		world.setWarmStarting(true);
 		world.setDebugDraw(sDD);
@@ -61,11 +70,11 @@ public class SpaceShooter extends BasicGame {
 		manager.setWorld(world);
 		manager.setContainer(container);
 		
-		plane = new Plane("res/plane.png", 200f, 200f);
-		manager.addEntity(plane);
+		Plane player = new Plane("res/plane.png", 0f, 0f);
+		manager.addEntity(player);
 		
-		DummyPlane dummy = new DummyPlane("res/plane.png", 400f, 300f);
-		manager.addEntity(dummy);
+		DummyPlane dummyPlane = new DummyPlane("res/plane.png", 4f, -6f);
+		manager.addEntity(dummyPlane);
 		
 		Walls walls = new Walls(container, manager);
 		walls.generateWalls();
