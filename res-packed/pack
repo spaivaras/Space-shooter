@@ -1,0 +1,19 @@
+
+res1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+plane
+  rotate: false
+  xy: 2, 2
+  size: 122, 121
+  orig: 122, 121
+  offset: 0, 0
+  index: -1
+laser
+  rotate: false
+  xy: 2, 125
+  size: 11, 50
+  orig: 11, 50
+  offset: 0, 0
+  index: -1
