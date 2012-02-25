@@ -34,6 +34,8 @@ public abstract class Entity extends Image {
 	
 	public abstract void createPhysicsBody();
 	public abstract void updatePosition(GameContainer container, int delta);
+	public abstract Boolean collision(Entity with);
+	public abstract void hit();
 	
 	public void update(GameContainer container, int delta) {
 		//Update sprite position from physics body position in the world

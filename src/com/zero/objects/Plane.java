@@ -66,7 +66,7 @@ public class Plane extends Entity
 				Vec2 point = body.getWorldPoint(new Vec2(0, -88) );
 				
 				try {
-					Bullet box = new Bullet("res/laser.png", point.x, point.y, body.getAngle());
+					Bullet box = new Bullet("res/laser.png", point.x, point.y, body.getAngle(), this);
 					manager.addEntity(box);
 				} catch (SlickException e) {
 					e.printStackTrace();
@@ -114,5 +114,18 @@ public class Plane extends Entity
         body.setLinearDamping(0.05f);
         body.setAngularDamping(0.2f);
         body.setTransform(body.getPosition(), (float)Math.toRadians(180));
+        body.setUserData(this);
+	}
+
+	@Override
+	public Boolean collision(Entity with) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void hit() {
+		// TODO Auto-generated method stub
+		
 	}
 }

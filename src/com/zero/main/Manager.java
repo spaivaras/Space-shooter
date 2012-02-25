@@ -1,12 +1,18 @@
 package com.zero.main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.openal.Audio;
@@ -15,11 +21,13 @@ import org.newdawn.slick.util.ResourceLoader;
 
 import com.zero.objects.Entity;
 
-public class Manager {
+public class Manager implements ContactListener {
 
 	private static Manager manager;
 	private CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
+	private ArrayList<Entity> needsToBeRemoved = new ArrayList<Entity>();
 	private HashMap<String, Audio> sounds;
+	
 	protected World world = null;
 	protected GameContainer container = null;
 	protected OBBViewportTransform transform;
@@ -35,6 +43,13 @@ public class Manager {
 	}
 
 	public void update(GameContainer container, int delta) {
+		
+		for (Entity entity : needsToBeRemoved) {
+			removeEntity(entity);
+		}
+		
+		needsToBeRemoved.clear();
+		
 		for (Entity entity : entities) {
 			entity.update(container, delta);
 		}
@@ -49,8 +64,6 @@ public class Manager {
 		if (entity.getBody() != null) {
 			world.destroyBody(entity.getBody());
 		}
-		
-		System.out.println("Object destroyed: " + entity.toString());
 	}
 	
 	public void playSound(String key, Float pitch, Float gain, Boolean loop) {
@@ -131,4 +144,35 @@ public class Manager {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void beginContact(Contact contact) {
+	}
+
+	@Override
+	public void endContact(Contact contact) {
+		Body a = contact.getFixtureA().getBody();
+		if (a.getUserData() != null) {
+			System.out.println("Body A has a user data!! probably its a laser beam!! WHOOOFF");
+		}
+		
+		Body b = contact.getFixtureB().getBody();
+		if (b.getUserData() != null && a.getUserData() != null) {
+			Entity caller = (Entity)b.getUserData();
+			Entity receiver = (Entity)a.getUserData();
+			
+			Boolean shouldRemove = caller.collision(receiver);
+			
+			if (shouldRemove && needsToBeRemoved.indexOf(caller) == -1) {
+				needsToBeRemoved.add(caller);
+			}
+		}
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {}
 }

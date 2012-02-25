@@ -26,8 +26,8 @@ public class SpaceShooter extends BasicGame {
 	// if remaining time to simulate is smaller than this, the rest of time will be added to the last step,
 	// instead of performing one more single step with only the small delta time.
 	float MINIMUM_TIMESTEP = FIXED_TIMESTEP / 2;
-	int VELOCITY_ITERATIONS = 1;
-	int POSITION_ITERATIONS = 1;
+	int VELOCITY_ITERATIONS = 10;
+	int POSITION_ITERATIONS = 10;
 	// maximum number of steps per tick to avoid spiral of death
 	int MAXIMUM_NUMBER_OF_STEPS = 100;
 	
@@ -50,7 +50,7 @@ public class SpaceShooter extends BasicGame {
 	public void init(GameContainer container) throws SlickException {
 		
 		sDD = new Slick2dDebugDraw(container.getGraphics(), container); // arg0 is the GameContainer in this case, I put this code in my init method
-		sDD.setFlags(0x0011); //Setting the debug draw flags,
+		sDD.setFlags(0x0000); //Setting the debug draw flags,
 		
 		Vec2 gravity = new Vec2(0.0f, 0.00f);
 		world = new World(gravity, true);
@@ -69,6 +69,8 @@ public class SpaceShooter extends BasicGame {
 		
 		Walls walls = new Walls(container, manager);
 		walls.generateWalls();
+		
+		world.setContactListener(manager);
 	}
 
 	@Override
