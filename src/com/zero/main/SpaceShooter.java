@@ -53,8 +53,11 @@ public class SpaceShooter implements ApplicationListener {
 		renderer = new Box2DDebugRenderer(true, true, true, true);
 		spriteBatch = renderer.batch;
 
-this.createLights();Map map = new Map();		map.setBlockSize(Manager.PTM, Manager.PTM);		map.generate();		manager = Manager.getInstance();
-		
+		this.createLights();Map map = new Map();
+		map.setBlockSize(Manager.PTM, Manager.PTM);		
+		map.generate();		
+		manager = Manager.getInstance();
+
 		manager.setMap(map);
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
@@ -100,10 +103,10 @@ this.createLights();Map map = new Map();		map.setBlockSize(Manager.PTM, Manager.
 		camera.position.x = player.getBody().getPosition().x;
 		camera.position.y = player.getBody().getPosition().y;
 		camera.update();
-		
+
 		//Works only on OpenGL 1 wtf??
 		//camera.apply(Gdx.gl10);
-		
+
 		spriteBatch.setProjectionMatrix(camera.combined);
 
 		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
@@ -113,7 +116,7 @@ this.createLights();Map map = new Map();		map.setBlockSize(Manager.PTM, Manager.
 		renderer.render(world, camera.combined);
 
 		spriteBatch.begin();
-			manager.render();
+		manager.render();
 		spriteBatch.end();
 
 

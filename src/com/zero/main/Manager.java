@@ -60,24 +60,19 @@ public class Manager implements ContactListener {
 	
 	
 	public void render() {
-		int width = this._map.getBlockWidth();
-		int height = this._map.getBlockHeight();
 		int x;
 		int y;
 		CopyOnWriteArrayList<Tile> map = this._map.getMap();
 		
 		for(Tile tile : map) {
-			x =  tile.getX() * Manager.PTM;
-			y =  tile.getY() * Manager.PTM;
+			x =  tile.getX();
+			y =  tile.getY();
 			if(tile.getType() == 0 || tile.getType() == 1) {
-				System.out.println(tile.getTitle());
-				Vector2 screen = manager.translateCoordsToScreen(new Vector2(x, y), 32f,32f);
-				batch.draw(regions[tile.getType()], x , y);
+				
+				batch.draw(regions[tile.getType()], x, y, 0, 0, 32f, 32f, 1f / (float)Manager.PTM, 1f / (float)Manager.PTM, 90, true);
 			} 
 			
 		}
-		
-
 		
 		for (Entity entity : entities) {
 			entity.draw();
@@ -154,8 +149,8 @@ public class Manager implements ContactListener {
 	}
 	
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
-		Float screenX = coordWorld.x;// * PTM;// + (Gdx.graphics.getWidth() / 2);
-		Float screenY = -coordWorld.y;// * PTM;// + (Gdx.graphics.getHeight() / 2);
+		Float screenX = coordWorld.x;
+		Float screenY = -coordWorld.y;
         return new Vector2(screenX, screenY);
 	}
 	

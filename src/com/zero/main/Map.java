@@ -1,9 +1,6 @@
 package com.zero.main;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.badlogic.gdx.utils.Array;
 
 public class Map {
 
@@ -17,7 +14,7 @@ public class Map {
 	
 	public void generate() {
 		GenerateMap generator = new GenerateMap();
-		generator.generate(10, 10);
+		generator.generate(100, 100);
 		this._map = generator.getMap();
 	}
 	
