@@ -23,6 +23,7 @@ public class MainDesktop {
 		config.title = "Space shooter v0.0.1";
 		config.width = 800;
 		config.height = 600;
+		config.useGL20 = true;
 		new LwjglApplication(new SpaceShooter(), config);
 	}
 

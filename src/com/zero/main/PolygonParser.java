@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -16,12 +17,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class PolygonParser {
 
-	public void parseEntity(String name, Body body) {
+	public void parseEntity(String name, Body body, short filterBit) {
 
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse("res/"+name+".xml");
+			Document doc = dBuilder.parse(Gdx.files.internal("res/" +name+ ".xml").file()  );
 			doc.getDocumentElement().normalize();
 
 			NodeList nList = doc.getElementsByTagName("polygon");
@@ -50,6 +51,9 @@ public class PolygonParser {
 					fixtureDef.density = 600f;
 					fixtureDef.friction = 0f;
 					fixtureDef.restitution = 0.3f;
+					fixtureDef.filter.categoryBits = filterBit;
+					fixtureDef.filter.maskBits = (short)~filterBit;
+					
 					body.createFixture(fixtureDef);
 					shape.dispose();
 				}

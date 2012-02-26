@@ -1,5 +1,7 @@
 package com.zero.objects;
 
+import box2dLight.Light;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -21,6 +23,7 @@ public abstract class Entity {
 	
 	protected float angleDifference = 0;
 	protected Boolean shouldDraw = false;
+	protected Light glowLight;
 	
 	public Entity(TextureAtlas atlas, String name)
 	{
@@ -44,6 +47,7 @@ public abstract class Entity {
 		createPhysicsBody();
 		if (body != null) {
 			body.setUserData(this);
+			createLights();
 		}
 	}
 	
@@ -51,6 +55,8 @@ public abstract class Entity {
 	public abstract void updatePosition(float delta);
 	public abstract Boolean collision(Entity with);
 	public abstract void hit();
+	protected abstract void createLights();
+	protected abstract void removeCustomLights();
 	
 	public void update(float delta) {
 		updatePosition(delta);
@@ -104,6 +110,13 @@ public abstract class Entity {
 	
 	public Float getHeight() {
 		return sprite.getHeight();
+	}
+	
+	public void removeLights() {
+		if (glowLight != null) {
+			glowLight.remove();
+		}
+		this.removeCustomLights();
 	}
 	
 }

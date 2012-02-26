@@ -34,6 +34,8 @@ public class Walls  {
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = 0x0004;
+		fixtureDef.filter.maskBits = -1;
 		body.createFixture(fixtureDef);
 		shape.dispose();
 		//Bottom end
@@ -46,6 +48,8 @@ public class Walls  {
 		
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = 0x0004;
+		fixtureDef.filter.maskBits = -1;
 		body.createFixture(fixtureDef);
 		shape.dispose();
 		//Ceiling end
@@ -58,6 +62,8 @@ public class Walls  {
 		
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = 0x0004;
+		fixtureDef.filter.maskBits = -1;
 		body.createFixture(fixtureDef);
 		shape.dispose();
 		//Right end
@@ -70,6 +76,8 @@ public class Walls  {
 		
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
+		fixtureDef.filter.categoryBits = 0x0004;
+		fixtureDef.filter.maskBits = -1;
 		body.createFixture(fixtureDef);
 		shape.dispose();
 		//Left end

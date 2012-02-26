@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,6 +32,7 @@ public class Manager implements ContactListener {
 	
 	protected World world = null;
 	protected SpriteBatch batch = null;
+	protected RayHandler lightEngine = null;
 	
 	private Manager() {
 		loadSounds();
@@ -62,6 +65,7 @@ public class Manager implements ContactListener {
 		entities.remove(entity);
 		if (entity.getBody() != null) {
 			world.destroyBody(entity.getBody());
+			entity.removeLights();
 		}
 	}
 	
@@ -171,5 +175,13 @@ public class Manager implements ContactListener {
 
 	public void setBatch(SpriteBatch batch) {
 		this.batch = batch;
+	}
+
+	public RayHandler getLightEngine() {
+		return lightEngine;
+	}
+
+	public void setLightEngine(RayHandler lightEngine) {
+		this.lightEngine = lightEngine;
 	}
 }

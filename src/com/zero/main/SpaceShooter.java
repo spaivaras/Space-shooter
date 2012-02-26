@@ -3,6 +3,8 @@ package com.zero.main;
 
 import org.lwjgl.opengl.Display;
 
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,10 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.DummyPlane;
 import com.zero.objects.Plane;
@@ -36,16 +35,16 @@ public class SpaceShooter implements ApplicationListener {
 	
 	SpriteBatch spriteBatch;
 	Sprite planeSprite;
-	OrthographicCamera cam;
+	OrthographicCamera camera;
     World world;
     Box2DDebugRenderer renderer;
 	Body body;
 	Manager manager;
+	RayHandler lightEngine;
 	
 	@Override
 	public void create() {
-		cam = new OrthographicCamera(800, 600);
-        cam.zoom = (float)1 / Manager.PTM;
+		this.createCamera();
 		
 		TextureAtlas atlas;
 		atlas = new TextureAtlas(Gdx.files.internal("res-packed/pack"));
@@ -53,10 +52,13 @@ public class SpaceShooter implements ApplicationListener {
 		world = new World(new Vector2(0, 0), true);
 		renderer = new Box2DDebugRenderer();
 		spriteBatch = renderer.batch;
+		
+		this.createLights();
 
 		manager = Manager.getInstance();
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
+		manager.setLightEngine(lightEngine);
 		
 		world.setContactListener(manager);
 		
@@ -69,32 +71,59 @@ public class SpaceShooter implements ApplicationListener {
 		Walls walls = new Walls(manager);
 		walls.generateWalls();
 	}
+	
+	private void createCamera() {
+		camera = new OrthographicCamera(800, 600);
+		camera.position.set(0, 0, 0);
+		camera.zoom = 1f / (float)Manager.PTM; 
+	}
+	
+	private void createLights() {
+		RayHandler.setColorPrecisionHighp();
+		RayHandler.setGammaCorrection(true);
+		
+		lightEngine = new RayHandler(world);
+		lightEngine.setAmbientLight(0.3f);
+		lightEngine.setCulling(true);
+		lightEngine.setBlur(true);
+		lightEngine.setBlurNum(10);
+	}
 
 	@Override
-	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void resize(int width, int height) {}
 
 	@Override
 	public void render() {
 		//Some strange way to limit fps
 		Display.sync(200);
-		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
+		camera.update();
 		
+		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
 		manager.update(Gdx.graphics.getDeltaTime());
-	    cam.update();
-
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
        
-        //cam.apply(Gdx.gl10);
-      //  renderer.render(world, cam.projection);
-		
+       // renderer.render(world, camera.projection);
+        
 		spriteBatch.begin();
 		spriteBatch.setColor(Color.WHITE);
 			manager.render();
 		spriteBatch.end();
 		
+		//spriteBatch.setProjectionMatrix(camera.combined);
+		
+		this.renderLights(stepped);
+	}
+	
+	private void renderLights(Boolean worldSteped) {
+		if (worldSteped) {
+			lightEngine.update();
+		}
+
+		lightEngine.setCombinedMatrix(camera.combined, camera.position.x,
+				camera.position.y, camera.viewportWidth * camera.zoom,
+				camera.viewportHeight * camera.zoom);
+		
+		lightEngine.render();
 	}
 	
 	private boolean fixedStep(float delta) {
@@ -112,21 +141,11 @@ public class SpaceShooter implements ApplicationListener {
 	}
 
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void resume() {}
 
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	public void dispose() {}
 }
