@@ -39,3 +39,10 @@ Objects specification:
     Backward: 50 kg*m/s
     Rotation: 90 kg*m/s
 --==----===----===----==--
+
+Developed by JoinedForces:
+  Using:
+    Jbox2d: http://jbox2d.org/
+    Slick 2D game engine: http://slick.cokeandcode.com/
+    LWJGL: http://lwjgl.org/
+
