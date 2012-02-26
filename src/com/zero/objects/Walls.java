@@ -40,34 +40,6 @@ public class Walls  {
 		shape.dispose();
 		//Bottom end
 		
-		//Ceiling
-		shape = new EdgeShape();
-		v1 = new Vector2(-halfX, halfY);
-		v2 = new Vector2(halfX, halfY);
-		shape.set(v1, v2);
-		
-		fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.filter.categoryBits = 0x0004;
-		fixtureDef.filter.maskBits = -1;
-		body.createFixture(fixtureDef);
-		shape.dispose();
-		//Ceiling end
-		
-		//Right
-		shape = new EdgeShape();
-		v1 = new Vector2(halfX, halfY);
-		v2 = new Vector2(halfX, -halfY);
-		shape.set(v1, v2);
-		
-		fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.filter.categoryBits = 0x0004;
-		fixtureDef.filter.maskBits = -1;
-		body.createFixture(fixtureDef);
-		shape.dispose();
-		//Right end
-		
 		//Left
 		shape = new EdgeShape();
 		v1 = new Vector2(-halfX, halfY);

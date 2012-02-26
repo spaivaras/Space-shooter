@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
 
@@ -55,6 +56,7 @@ public class DummyPlane extends Entity {
 			}
 			
 			sprite.setPosition(screen.x, screen.y);
+			sprite.setScale(1f / (float)Manager.PTM );
 			sprite.draw(manager.getBatch());
 		}
 	}

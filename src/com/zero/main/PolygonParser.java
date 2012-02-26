@@ -46,7 +46,7 @@ public class PolygonParser {
 
 					PolygonShape shape = new PolygonShape();
 					shape.set(vertices);
-
+					
 					fixtureDef.shape = shape;
 					fixtureDef.density = 600f;
 					fixtureDef.friction = 0f;

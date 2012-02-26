@@ -80,6 +80,7 @@ public abstract class Entity {
 					(float)this.sprite.getHeight() / 2);
 			
 			sprite.setPosition(screen.x, screen.y);
+			sprite.setScale(1f / (float)Manager.PTM );
 			sprite.draw(manager.getBatch());
 		}
 	}

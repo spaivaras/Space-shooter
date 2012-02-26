@@ -113,8 +113,8 @@ public class Manager implements ContactListener {
 	}
 	
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
-		Float screenX = coordWorld.x * PTM + (Gdx.graphics.getWidth() / 2);
-		Float screenY = -coordWorld.y * PTM + (Gdx.graphics.getHeight() / 2);
+		Float screenX = coordWorld.x;// * PTM;// + (Gdx.graphics.getWidth() / 2);
+		Float screenY = -coordWorld.y;// * PTM;// + (Gdx.graphics.getHeight() / 2);
         return new Vector2(screenX, screenY);
 	}
 	
