@@ -54,7 +54,12 @@ public class SpaceShooter implements ApplicationListener {
 		renderer = new Box2DDebugRenderer();
 		spriteBatch = renderer.batch;
 
+		Map map = new Map();
+		map.setBlockSize(Manager.PTM, Manager.PTM);
+		map.generate();
 		manager = Manager.getInstance();
+		
+		manager.setMap(map);
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
 		

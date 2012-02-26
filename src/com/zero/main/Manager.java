@@ -6,7 +6,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -31,11 +33,49 @@ public class Manager implements ContactListener {
 	protected World world = null;
 	protected SpriteBatch batch = null;
 	
+	protected Map _map;
+	private Texture                 texture;       
+	 private TextureRegion[]         regions = new TextureRegion[4]; // #2
+	
 	private Manager() {
 		loadSounds();
 	}
 	
+	public void setMap(Map map) {
+		texture = new Texture(Gdx.files.internal("res/hero.png"));
+        //batch = new SpriteBatch();
+        regions[0] = new TextureRegion(texture, 0, 0, 32, 32);          // #3
+        regions[1] = new TextureRegion(texture, 32, 0, 32, 32);    // #4
+        regions[2] = new TextureRegion(texture, 0, 32, 32, 32);         // #5
+        regions[3] = new TextureRegion(texture, 32, 32, 32, 32);    // #6
+		this._map = map;
+	}
+	
+	public Map getMap() {
+		return this._map;
+	}
+	
+	
 	public void render() {
+		int width = this._map.getBlockWidth();
+		int height = this._map.getBlockHeight();
+		int x;
+		int y;
+		CopyOnWriteArrayList<Tile> map = this._map.getMap();
+		
+		for(Tile tile : map) {
+			x =  tile.getX() * Manager.PTM;
+			y =  tile.getY() * Manager.PTM;
+			if(tile.getType() == 0 || tile.getType() == 1) {
+				System.out.println(tile.getTitle());
+				Vector2 screen = manager.translateCoordsToScreen(new Vector2(x, y), 32f,32f);
+				batch.draw(regions[tile.getType()], x , y);
+			} 
+			
+		}
+		
+
+		
 		for (Entity entity : entities) {
 			entity.draw();
 		}
@@ -67,6 +107,7 @@ public class Manager implements ContactListener {
 	
 	public Sound playSound(String key, Float pitch, Float gain, Boolean loop) {
 		Sound temp = sounds.get(key);
+		
 		if (temp != null) {
 			long id;
 			if (loop) {
