@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -32,6 +34,7 @@ public class Manager implements ContactListener {
 	
 	protected World world = null;
 	protected SpriteBatch batch = null;
+	protected RayHandler lightEngine = null;
 	
 	protected Map _map;
 	private Texture                 texture;       
@@ -102,6 +105,7 @@ public class Manager implements ContactListener {
 		entities.remove(entity);
 		if (entity.getBody() != null) {
 			world.destroyBody(entity.getBody());
+			entity.removeLights();
 		}
 	}
 	
@@ -150,8 +154,8 @@ public class Manager implements ContactListener {
 	}
 	
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
-		Float screenX = coordWorld.x * PTM + (Gdx.graphics.getWidth() / 2);
-		Float screenY = -coordWorld.y * PTM + (Gdx.graphics.getHeight() / 2);
+		Float screenX = coordWorld.x;// * PTM;// + (Gdx.graphics.getWidth() / 2);
+		Float screenY = -coordWorld.y;// * PTM;// + (Gdx.graphics.getHeight() / 2);
         return new Vector2(screenX, screenY);
 	}
 	
@@ -212,5 +216,13 @@ public class Manager implements ContactListener {
 
 	public void setBatch(SpriteBatch batch) {
 		this.batch = batch;
+	}
+
+	public RayHandler getLightEngine() {
+		return lightEngine;
+	}
+
+	public void setLightEngine(RayHandler lightEngine) {
+		this.lightEngine = lightEngine;
 	}
 }

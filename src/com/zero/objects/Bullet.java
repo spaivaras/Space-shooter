@@ -1,6 +1,9 @@
 package com.zero.objects;
 
 
+import box2dLight.ConeLight;
+
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -29,6 +32,7 @@ public class Bullet extends Entity {
 		
 		manager.playSound("laser", 4f, 0.3f, false);
 		body.setTransform(body.getPosition(), shooter.body.getAngle());
+		createLights();
 	}
 	
 	public void updatePosition(float delta) {
@@ -74,6 +78,8 @@ public class Bullet extends Entity {
 	    fixtureDef.friction = 0f;
 	    fixtureDef.restitution = 0.0f;
 	    fixtureDef.isSensor = true;
+	    fixtureDef.filter.categoryBits = 0x0008;
+	    fixtureDef.filter.maskBits = ~0x0008;
 	    body.createFixture(fixtureDef);
 	    
 	    shape.dispose();
@@ -95,5 +101,20 @@ public class Bullet extends Entity {
 
 	@Override
 	public void hit() {
+	}
+
+	@Override
+	protected void createLights() {
+		glowLight = new ConeLight(manager.getLightEngine(), 10, new Color(0f, 0f, 1f, 1f), 15f, 0f, 0f, 0f, 10f);
+		glowLight.attachToBody(body, 0, 0);
+		glowLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
+		glowLight.setDirection( (float)Math.toDegrees( body.getAngle()  ) - 90 );
+		
+	}
+
+	@Override
+	protected void removeCustomLights() {
+		// TODO Auto-generated method stub
+		
 	}
 }

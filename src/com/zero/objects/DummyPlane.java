@@ -2,11 +2,14 @@ package com.zero.objects;
 
 import java.util.Random;
 
+import box2dLight.PointLight;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
 
@@ -53,6 +56,7 @@ public class DummyPlane extends Entity {
 			}
 			
 			sprite.setPosition(screen.x, screen.y);
+			sprite.setScale(1f / (float)Manager.PTM );
 			sprite.draw(manager.getBatch());
 		}
 	}
@@ -68,7 +72,7 @@ public class DummyPlane extends Entity {
 		body = manager.getWorld().createBody(bodyDef);
 
 		PolygonParser pp = new PolygonParser();
-		pp.parseEntity("plane", body);
+		pp.parseEntity("plane", body, (short)0x0002);
 
 		body.setLinearDamping(0.3f);
 		body.setAngularDamping(0.5f);
@@ -88,5 +92,19 @@ public class DummyPlane extends Entity {
 		colorCycleCount = 0;
 
 		manager.playSound("hit", 2.5f, 0.2f, false);
+	}
+
+	@Override
+	protected void createLights() {
+		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 5f, 0f, 0f);
+		glowLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
+		glowLight.attachToBody(body, 0f, 0f);
+		
+	}
+
+	@Override
+	protected void removeCustomLights() {
+		// TODO Auto-generated method stub
+		
 	}
 }
