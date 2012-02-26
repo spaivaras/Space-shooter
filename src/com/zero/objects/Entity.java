@@ -22,6 +22,15 @@ public abstract class Entity {
 	protected float angleDifference = 0;
 	protected Boolean shouldDraw = false;
 	
+	public Entity(TextureAtlas atlas, String name)
+	{
+		this.name = name;
+		this.atlas = atlas;
+		
+		manager = Manager.getInstance();
+		sprite = atlas.createSprite(name);
+	}
+	
 	public Entity(TextureAtlas atlas, String name, Float x, Float y) {
 		this.name = name;
 		this.atlas = atlas;
@@ -87,6 +96,14 @@ public abstract class Entity {
 
 	public Body getBody() {
 		return body;
+	}
+	
+	public Float getWidth() {
+		return sprite.getWidth();
+	}
+	
+	public Float getHeight() {
+		return sprite.getHeight();
 	}
 	
 }

@@ -137,10 +137,6 @@ public class Manager implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
-	}
-
-	@Override
-	public void endContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
 		Body b = contact.getFixtureB().getBody();
 		
@@ -156,6 +152,10 @@ public class Manager implements ContactListener {
 				needsToBeRemoved.add(caller);
 			}
 		}
+	}
+
+	@Override
+	public void endContact(Contact contact) {
 	}
 
 	@Override

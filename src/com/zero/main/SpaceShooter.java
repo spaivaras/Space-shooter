@@ -18,7 +18,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.zero.objects.DummyPlane;
 import com.zero.objects.Plane;
+import com.zero.objects.Walls;
 
 public class SpaceShooter implements ApplicationListener {
 	
@@ -27,8 +29,8 @@ public class SpaceShooter implements ApplicationListener {
 	public final static float TIME_STEP = 1f / MAX_FPS;
 	private final static float MAX_STEPS = 1f + MAX_FPS / MIN_FPS;
 	private final static float MAX_TIME_PER_FRAME = TIME_STEP * MAX_STEPS;
-	private final static int VELOCITY_ITERS = 6;
-	private final static int POSITION_ITERS = 2;
+	private final static int VELOCITY_ITERS = 1;
+	private final static int POSITION_ITERS = 1;
 
 	float physicsTimeLeft;
 	
@@ -56,10 +58,16 @@ public class SpaceShooter implements ApplicationListener {
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
 		
+		world.setContactListener(manager);
+		
 		Plane player = new Plane(atlas, "plane", 0f, 0f);
 		manager.addEntity(player);
 		
+		DummyPlane dPlane = new DummyPlane(atlas, "plane", -5f, 0f);
+		manager.addEntity(dPlane);
 		
+		Walls walls = new Walls(manager);
+		walls.generateWalls();
 	}
 
 	@Override
@@ -79,8 +87,8 @@ public class SpaceShooter implements ApplicationListener {
 
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
        
-        cam.apply(Gdx.gl10);
-       // renderer.render(world, cam.projection);
+        //cam.apply(Gdx.gl10);
+      //  renderer.render(world, cam.projection);
 		
 		spriteBatch.begin();
 		spriteBatch.setColor(Color.WHITE);

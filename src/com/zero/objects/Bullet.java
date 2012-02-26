@@ -12,17 +12,23 @@ import com.zero.main.Manager;
 public class Bullet extends Entity {
 	
 	public static final float BULLET_SPEED_FACTOR = 0.1f;
-	public static final int ALIVE_TIME = 200;
+	public static final float ALIVE_TIME = 0.2f;
 	
-	private int totalAliveTime = 0;
+	private float totalAliveTime = 0;
 	private Entity shooter = null;
 	
 	
-	public Bullet(TextureAtlas atlas, String name, Float x, Float y, Float angle, Entity shooter) {
-		super(atlas, name, x, y);
-		body.setTransform(body.getPosition(), angle);
-		manager.playSound("laser", 4f, 0.3f, false);
+	public Bullet(TextureAtlas atlas, String name, Entity shooter) {
+		super(atlas, name);
 		this.shooter = shooter;
+		
+		createPhysicsBody();
+		if (body != null) {
+			body.setUserData(this);
+		}
+		
+		manager.playSound("laser", 4f, 0.3f, false);
+		body.setTransform(body.getPosition(), shooter.body.getAngle());
 	}
 	
 	public void updatePosition(float delta) {
@@ -48,8 +54,10 @@ public class Bullet extends Entity {
 	
 	@Override
 	public void createPhysicsBody() {
+		Float placementY = (-shooter.getHeight() / 2 / Manager.PTM) - (sprite.getHeight() / 2 / Manager.PTM);
+		
 		bodyDef = new BodyDef();
-		bodyDef.position.set(new Vector2(x, y +  (sprite.getHeight() / Manager.PTM)));
+		bodyDef.position.set( shooter.body.getWorldPoint(new Vector2( 0, placementY )));
 		bodyDef.type = BodyType.DynamicBody;
 		body = manager.getWorld().createBody(bodyDef);
 	

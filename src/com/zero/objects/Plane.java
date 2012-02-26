@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
 public class Plane extends Entity 
@@ -63,8 +62,8 @@ public class Plane extends Entity
 		}
 		if(Gdx.input.isKeyPressed(Keys.SPACE) && !shotDelayOn) {
 			shotDelayOn = true;	
-			Vector2 point = body.getWorldPoint(new Vector2(0, 0-((float)sprite.getHeight() / 2 / Manager.PTM)));
-			Bullet laser = new Bullet(atlas, "laser", point.x, point.y, body.getAngle(), this);
+			
+			Bullet laser = new Bullet(atlas, "laser", this);
 			manager.addEntity(laser);					
 		}
 	}
@@ -103,8 +102,8 @@ public class Plane extends Entity
 		PolygonParser pp = new PolygonParser();
 		pp.parseEntity("plane", body);
 
-		body.setLinearDamping(0.3f);
-		body.setAngularDamping(0.5f);
+		body.setLinearDamping(0.6f);
+		body.setAngularDamping(0.9f);
 		body.setTransform(body.getPosition(), (float)Math.toRadians(180));
 	}
 
