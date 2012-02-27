@@ -95,15 +95,15 @@ public class Bullet extends Entity {
 		if (with.equals(shooter)) {
 			return false;
 		}
-		with.hit();
+		with.hit(this.shooter);
 		return true;
 	}
 
 	@Override
 	public void hit() {
 	}
-
-	@Override
+        
+        @Override
 	protected void createLights() {
 		glowLight = new ConeLight(manager.getLightEngine(), 10, new Color(0f, 0f, 1f, 1f), 15f, 0f, 0f, 0f, 10f);
 		glowLight.attachToBody(body, 0, 0);

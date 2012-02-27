@@ -55,6 +55,9 @@ public abstract class Entity {
 	public abstract void updatePosition(float delta);
 	public abstract Boolean collision(Entity with);
 	public abstract void hit();
+        public void hit(Entity what) {
+            hit();
+        }
 	protected abstract void createLights();
 	protected abstract void removeCustomLights();
 	
