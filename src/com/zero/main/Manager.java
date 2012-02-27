@@ -76,7 +76,6 @@ public class Manager implements ContactListener {
 
 				batch.draw(regions[tile.getType()], x, y, 0, 0, 32f, 32f, 1f / (float)Manager.PTM, 1f / (float)Manager.PTM, 90, true);
 			} 
-
 		}
 
 		for (Entity entity : entities) {

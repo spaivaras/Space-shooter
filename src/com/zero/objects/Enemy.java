@@ -19,18 +19,19 @@ public class Enemy extends Entity {
 
 	public static final int MAX_COLOR_CYCLE_COUNT = 2;
 	public static final float COLOR_CHANGE_TIME = 0.1f;
-        public static final float ROTATE_SPEED_FACTOR = 110f;
+	public static final float ROTATE_SPEED_FACTOR = 110f;
 	public static final float THRUSTER_FACTOR = 170f;
 	public static final float REV_THRUSTER_FACTOR = 50f;
-        
+	public static final float APPROACH_DISTANCE = 10f;
+
 	private Boolean colored = false;
 	private int colorCycleCount = MAX_COLOR_CYCLE_COUNT;
 	private float colorCycleTime = 0;
 	private Color colorOverlay;
-        
-        protected Entity target;
-        
-        protected Boolean activate = false;
+
+	protected Entity target;
+
+	protected Boolean activate = false;
 
 	public Enemy(TextureAtlas atlas, String name, Float x, Float y) {
 		super(atlas, name, x, y);
@@ -49,29 +50,43 @@ public class Enemy extends Entity {
 		} else {
 			colored = false;
 		}
-                if(activate) {
-                    if(target.getX() < this.getX())  {
-                        body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
-                    } else {
-                        body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
-                    }
-                    if(target.getY() < this.getY()) {
-                        body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
-                    } else {
-                        body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
-                    }
-                    //target.getY();
-                            
-                //body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
-                    //System.out.println("target" + target.getX());
-                    //System.out.println("me" + this.getX());
-                }
+		if(activate) {
+			
+			Float angleToTarget = (float)Math.atan2(
+			(double)(body.getPosition().x - target.getBody().getPosition().x),
+			(double)(body.getPosition().y - target.getBody().getPosition().y)
+			);
+			
+			body.setTransform(body.getPosition(), -angleToTarget);
+			
+
+//						
+//			Float reverseAngle = FULL_REVOLUTION_RADS - angleToTarget;
+//			
+//			
+//			if (body.getAngle() > reverseAngle && reverseAngle < FULL_REVOLUTION_RADS) {
+//				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
+//			} else if (body.getAngle() < reverseAngle && reverseAngle < FULL_REVOLUTION_RADS) {
+//				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
+//			} else if (body.getAngle() < -angleToTarget && reverseAngle > FULL_REVOLUTION_RADS) {
+//				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
+//			} else if (body.getAngle() > -angleToTarget && reverseAngle > FULL_REVOLUTION_RADS) {
+//				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
+//			}
+//			
+			Float distance = body.getWorldCenter().dst(target.getBody().getWorldCenter());
+			if (distance > APPROACH_DISTANCE) {
+				body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
+			} else {
+				body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+			}
+		}
 	}
-        
-        public void setTarget(Plane target) {
-            this.target = target;
-        }
-        private Vector2 getThrustVector(Boolean reverse) {
+
+	public void setTarget(Plane target) {
+		this.target = target;
+	}
+	private Vector2 getThrustVector(Boolean reverse) {
 		double rads = body.getAngle() + Math.toRadians(270);
 		double factor;
 
@@ -92,19 +107,19 @@ public class Enemy extends Entity {
 
 		return vector; 
 	}
-	
+
 	public void draw() {
 		if (shouldDraw && sprite != null) {
 			Vector2 screen = manager.translateCoordsToScreen(new Vector2(x, y), 
 					(float)this.sprite.getWidth() / 2, 
 					(float)this.sprite.getHeight() / 2);
-			
+
 			if (colored) {
 				sprite.setColor(colorOverlay);
 			} else {
 				sprite.setColor(Color.WHITE);
 			}
-			
+
 			sprite.setPosition(screen.x, screen.y);
 			sprite.setScale(1f / (float)Manager.PTM );
 			sprite.draw(manager.getBatch());
@@ -115,7 +130,7 @@ public class Enemy extends Entity {
 	//and registers physics body to physics world
 	@Override
 	public void createPhysicsBody() {
-		
+
 		bodyDef = new BodyDef();
 		bodyDef.position.set(new Vector2(x, y));
 		bodyDef.type = BodyType.DynamicBody;
@@ -143,23 +158,23 @@ public class Enemy extends Entity {
 
 		manager.playSound("hit", 2.5f, 0.2f, false);
 	}
-        public void hit(Entity newTarget) {
-            this.target = newTarget;
-            this.activate = true;
-            hit();
-        }
+	public void hit(Entity newTarget) {
+		this.target = newTarget;
+		this.activate = true;
+		hit();
+	}
 
 	@Override
 	protected void createLights() {
 		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 5f, 0f, 0f);
 		glowLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
 		glowLight.attachToBody(body, 0f, 0f);
-		
+
 	}
 
 	@Override
 	protected void removeCustomLights() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -11,6 +11,9 @@ import com.zero.main.Manager;
 
 public abstract class Entity {
 	
+	
+	public static final float FULL_REVOLUTION_RADS = 6.28318531F;
+	
 	protected String name;
 	protected Float x = 0f;
 	protected Float y = 0f;
@@ -68,6 +71,14 @@ public abstract class Entity {
 			Vector2 position = body.getPosition();
 			x = position.x;
 			y = -position.y;
+			
+			if (body.getAngle() > FULL_REVOLUTION_RADS) {
+				body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
+			} 
+			if (body.getAngle() < -FULL_REVOLUTION_RADS) {
+				body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
+			}
+			
 			sprite.setRotation((float)Math.toDegrees(  body.getAngle()  ) + angleDifference);
 		}
 		

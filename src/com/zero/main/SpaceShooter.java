@@ -123,7 +123,7 @@ public class SpaceShooter implements ApplicationListener {
 		manager.update(Gdx.graphics.getDeltaTime());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		renderer.render(world, camera.combined);
+		//renderer.render(world, camera.combined);
 
 		spriteBatch.begin();
 		manager.render();
