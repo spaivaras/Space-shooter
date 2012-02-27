@@ -2,9 +2,8 @@ package com.zero.objects;
 
 import java.util.Random;
 
+import box2dLight.ConeLight;
 import box2dLight.PointLight;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -28,6 +27,7 @@ public class Enemy extends Entity {
 	private int colorCycleCount = MAX_COLOR_CYCLE_COUNT;
 	private float colorCycleTime = 0;
 	private Color colorOverlay;
+	private ConeLight headLamp;
 
 	protected Entity target;
 
@@ -53,33 +53,41 @@ public class Enemy extends Entity {
 		if(activate) {
 			
 			Float angleToTarget = (float)Math.atan2(
-			(double)(body.getPosition().x - target.getBody().getPosition().x),
-			(double)(body.getPosition().y - target.getBody().getPosition().y)
+					(double)(body.getPosition().x - target.getBody().getPosition().x),
+					(double)(body.getPosition().y - target.getBody().getPosition().y)
 			);
 			
-			body.setTransform(body.getPosition(), -angleToTarget);
+			if (angleToTarget < 0) {
+				angleToTarget = FULL_REVOLUTION_RADS + angleToTarget;
+			}
 			
+			Float reverseAngle;
+			if (body.getAngle() < 0) {
+				reverseAngle = Math.abs(body.getAngle());
+			} else {
+				reverseAngle = FULL_REVOLUTION_RADS - Math.abs(body.getAngle());
+			}
+			
+			if (reverseAngle > angleToTarget && Math.abs(angleToTarget - reverseAngle) <= Math.PI) {
+				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
+			} else if(reverseAngle > angleToTarget) {
+				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
+			} else if(reverseAngle < angleToTarget && Math.abs(angleToTarget - reverseAngle) <= Math.PI) {
+				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
+			} else if(reverseAngle > angleToTarget) {
+				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
+			}
 
-//						
-//			Float reverseAngle = FULL_REVOLUTION_RADS - angleToTarget;
-//			
-//			
-//			if (body.getAngle() > reverseAngle && reverseAngle < FULL_REVOLUTION_RADS) {
-//				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
-//			} else if (body.getAngle() < reverseAngle && reverseAngle < FULL_REVOLUTION_RADS) {
-//				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
-//			} else if (body.getAngle() < -angleToTarget && reverseAngle > FULL_REVOLUTION_RADS) {
-//				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
-//			} else if (body.getAngle() > -angleToTarget && reverseAngle > FULL_REVOLUTION_RADS) {
-//				body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
-//			}
-//			
 			Float distance = body.getWorldCenter().dst(target.getBody().getWorldCenter());
 			if (distance > APPROACH_DISTANCE) {
 				body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
 			} else {
 				body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
 			}
+		}
+		
+		if (this.headLamp != null) {
+			this.headLamp.setDirection((float)Math.toDegrees( body.getAngle()) - 90f);
 		}
 	}
 
@@ -137,10 +145,10 @@ public class Enemy extends Entity {
 		body = manager.getWorld().createBody(bodyDef);
 
 		PolygonParser pp = new PolygonParser();
-		pp.parseEntity("plane", body, (short)0x0002);
+		pp.parseEntity("plane", body, (short)0x0032);
 
-		body.setLinearDamping(0.3f);
-		body.setAngularDamping(0.5f);
+		body.setLinearDamping(0.6f);
+		body.setAngularDamping(0.9f);
 		body.setTransform(body.getPosition(), (float)Math.toRadians(180));
 	}
 
@@ -161,6 +169,12 @@ public class Enemy extends Entity {
 	public void hit(Entity newTarget) {
 		this.target = newTarget;
 		this.activate = true;
+		
+		if (this.headLamp == null) {
+			this.headLamp = new ConeLight(manager.getLightEngine(), 128, new Color(Color.RED), 90f, 0f, 0f, 0f, 20f);
+			this.headLamp.attachToBody(body, 0, 0);
+			this.headLamp.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
+		}
 		hit();
 	}
 
@@ -169,12 +183,10 @@ public class Enemy extends Entity {
 		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 5f, 0f, 0f);
 		glowLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
 		glowLight.attachToBody(body, 0f, 0f);
-
 	}
 
 	@Override
 	protected void removeCustomLights() {
-		// TODO Auto-generated method stub
-
+		this.headLamp.remove();
 	}
 }

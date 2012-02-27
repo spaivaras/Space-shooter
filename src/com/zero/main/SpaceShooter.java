@@ -18,10 +18,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.BigAsteroid;
-import com.zero.objects.DummyPlane;
 import com.zero.objects.Enemy;
 import com.zero.objects.Plane;
-import com.zero.objects.Walls;
 
 public class SpaceShooter implements ApplicationListener {
 
@@ -73,18 +71,18 @@ public class SpaceShooter implements ApplicationListener {
 		manager.addEntity(player);
 		manager.clampCameraTo(player);
 
-		DummyPlane dPlane = new DummyPlane(atlas, "plane", 5f, -5f);
-		manager.addEntity(dPlane);
-                
-                Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
-                manager.addEntity(enemy);
-                
-        BigAsteroid asteroid = new BigAsteroid(atlas, "asteroid-big", 30f, 0f);
-        manager.addEntity(asteroid);
-        
-		Walls walls = new Walls(manager);
-		walls.generateWalls();
-		
+		//		DummyPlane dPlane = new DummyPlane(atlas, "plane", 5f, -5f);
+		//		manager.addEntity(dPlane);
+
+		Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
+		manager.addEntity(enemy);
+
+		BigAsteroid asteroid = new BigAsteroid(atlas, "asteroid-big", 30f, 0f);
+		manager.addEntity(asteroid);
+
+		//		Walls walls = new Walls(manager);
+		//		walls.generateWalls();
+		//		
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
@@ -94,7 +92,7 @@ public class SpaceShooter implements ApplicationListener {
 	private void createCamera() {
 		camera = new OrthographicCamera(800, 600);
 		camera.position.set(0, 0, 0);
-		camera.zoom = 1f / (float)Manager.PTM;
+		camera.zoom = 1f / 16f;//(float)Manager.PTM;
 	}
 
 	private void createLights() {
@@ -116,7 +114,7 @@ public class SpaceShooter implements ApplicationListener {
 		//Some strange way to limit fps
 		Display.sync(200);
 		manager.updateCameraPosition();
-		
+
 		spriteBatch.setProjectionMatrix(camera.combined);
 
 		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
@@ -130,7 +128,7 @@ public class SpaceShooter implements ApplicationListener {
 		spriteBatch.end();
 
 		this.renderLights(stepped);
-		
+
 		spriteBatch.setProjectionMatrix(normalProjection);
 		spriteBatch.begin();
 

@@ -12,7 +12,7 @@ import com.zero.main.Manager;
 public abstract class Entity {
 	
 	
-	public static final float FULL_REVOLUTION_RADS = 6.28318531F;
+	public static final float FULL_REVOLUTION_RADS = (float)Math.PI * 2;
 	
 	protected String name;
 	protected Float x = 0f;
@@ -65,6 +65,13 @@ public abstract class Entity {
 	protected abstract void removeCustomLights();
 	
 	public void update(float delta) {
+		
+		if (body.getAngle() >= FULL_REVOLUTION_RADS) {
+			body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
+		} else if (body.getAngle() <= -FULL_REVOLUTION_RADS) {
+			body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
+		}
+		
 		updatePosition(delta);
 		//Update sprite position from physics body position in the world
 		if (body != null) {

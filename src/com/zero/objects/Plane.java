@@ -75,6 +75,8 @@ public class Plane extends Entity
 		if (this.headLamp != null) {
 			this.headLamp.setDirection((float)Math.toDegrees( body.getAngle()) - 90f);
 		}
+		
+		//System.out.println("Mano: " + Math.toDegrees(body.getAngle()));
 	}
 
 	private Vector2 getThrustVector(Boolean reverse) {
