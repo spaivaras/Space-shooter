@@ -7,7 +7,7 @@ Controls:
   S - Rotate right
 
   SPACE - Shoot lasers !!
-
+  LSHIFT - Afterburners
   
 --==----===----===----==--
 Info:
@@ -17,7 +17,8 @@ Info:
   There is no damage, and ships are impenetrable.
   Latest build just to check physics in more than 1 model, as well as increased polygon count
   and fast moving bodies
-
+  
+  To wake up other plane, shoot it!
 
 --==----===----===----==--
 Objects specification:

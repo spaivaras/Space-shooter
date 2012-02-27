@@ -18,13 +18,18 @@ public class Plane extends Entity
 	public static final float SHOT_DELAY = 0.2f;
 	public static final float ROTATE_SPEED_FACTOR = 110f;
 	public static final float THRUSTER_FACTOR = 170f;
+	public static final float BOOST_FACTOR = 1000f;
+	public static final float MAX_SPEED = 50f;
 	public static final float REV_THRUSTER_FACTOR = 50f;
 
 	private Boolean shotDelayOn = false;
 	private float shotCounter = 0;
 	private Sound thrusterSound = null;
 	private Sound revThrusterSound = null;
+	private Sound turboSound = null;
 	private ConeLight headLamp;
+	private Boolean boost = false;
+	
 	
 	public Plane(TextureAtlas atlas, String name, Float x, Float y) {
 		super(atlas, name, x, y);
@@ -40,11 +45,25 @@ public class Plane extends Entity
 			shotCounter = 0;
 		}
 		
+		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+			this.boost = true;
+		}
+		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || !Gdx.input.isKeyPressed(Keys.W)) {
+			if (turboSound != null) {
+				turboSound.stop();
+				turboSound = null;
+			}
+			boost = false;
+		}
 		if(Gdx.input.isKeyPressed(Keys.W)) {
 			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
 			if (thrusterSound == null) {
 				thrusterSound = manager.playSound("thruster", 1f, 0.3f, true);
 			}
+			if (boost && turboSound == null) {
+				turboSound = manager.playSound("turbo", 1f, 0.2f, false);
+			}
+			
 		} else if(thrusterSound != null) {
 			thrusterSound.stop();
 			thrusterSound = null;
@@ -75,8 +94,6 @@ public class Plane extends Entity
 		if (this.headLamp != null) {
 			this.headLamp.setDirection((float)Math.toDegrees( body.getAngle()) - 90f);
 		}
-		
-		//System.out.println("Mano: " + Math.toDegrees(body.getAngle()));
 	}
 
 	private Vector2 getThrustVector(Boolean reverse) {
@@ -87,6 +104,14 @@ public class Plane extends Entity
 			factor = REV_THRUSTER_FACTOR;
 		} else {
 			factor = THRUSTER_FACTOR;
+			
+			if (boost) {
+				factor += BOOST_FACTOR;
+			}
+		}
+		
+		if (body.getLinearVelocity().len() > MAX_SPEED) {
+			return new Vector2(0f, 0f);
 		}
 
 		//x + d * cos(a)  y + d.sin(a)

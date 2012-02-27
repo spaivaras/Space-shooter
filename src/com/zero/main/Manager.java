@@ -176,6 +176,9 @@ public class Manager implements ContactListener {
 
 		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/hit.ogg"));
 		sounds.put("hit", hit);
+		
+		Sound turbo = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/turbo.ogg"));
+		sounds.put("turbo", turbo);
 	}
 
 	@Override

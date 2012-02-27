@@ -92,7 +92,7 @@ public class SpaceShooter implements ApplicationListener {
 	private void createCamera() {
 		camera = new OrthographicCamera(800, 600);
 		camera.position.set(0, 0, 0);
-		camera.zoom = 1f / 16f;//(float)Manager.PTM;
+		camera.zoom = 1f / (float)Manager.PTM;
 	}
 
 	private void createLights() {
