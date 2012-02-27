@@ -171,7 +171,7 @@ public class Enemy extends Entity {
 		this.activate = true;
 		
 		if (this.headLamp == null) {
-			this.headLamp = new ConeLight(manager.getLightEngine(), 128, new Color(Color.RED), 90f, 0f, 0f, 0f, 20f);
+			this.headLamp = new ConeLight(manager.getLightEngine(), 128, new Color(Color.RED), 30f, 0f, 0f, 0f, 20f);
 			this.headLamp.attachToBody(body, 0, 0);
 			this.headLamp.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
 		}
