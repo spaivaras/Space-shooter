@@ -1,19 +1,32 @@
-
 res1.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 plane
   rotate: false
-  xy: 2, 2
-  size: 122, 121
+  xy: 395, 2
+  size: 88, 121
   orig: 122, 121
+  offset: 17, 0
+  index: -1
+hero
+  rotate: false
+  xy: 2, 444
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+asteroid-big
+  rotate: false
+  xy: 2, 2
+  size: 391, 440
+  orig: 391, 440
   offset: 0, 0
   index: -1
 laser
   rotate: false
-  xy: 2, 125
-  size: 11, 50
+  xy: 68, 444
+  size: 7, 48
   orig: 11, 50
-  offset: 0, 0
+  offset: 2, 1
   index: -1

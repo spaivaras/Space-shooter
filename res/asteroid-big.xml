@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with http://www.physicseditor.de -->
+<bodydef version="1.0">
+	<bodies>
+    
+		<body name="asteroid-big" dynamic="true">
+            
+            <fixture
+                    density="2"
+                    friction="0"
+                    restitution="0"
+                    filter_categoryBits="1"
+                    filter_groupIndex="0"
+                    filter_maskBits="65535"
+                    isSensor="false"
+                    type="POLYGON"
+                    >
+
+                    
+                    <polygon>
+                        
+                        <vertex x="-179.0000" y="16.0000" />
+                        
+                        <vertex x="-140.0000" y="-16.0000" />
+                        
+                        <vertex x="-113.5000" y="150.5000" />
+                        
+                        <vertex x="-153.5000" y="138.5000" />
+                        
+                        <vertex x="-195.0000" y="85.0000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="187.5000" y="-83.5000" />
+                        
+                        <vertex x="184.0000" y="8.0000" />
+                        
+                        <vertex x="139.5000" y="136.5000" />
+                        
+                        <vertex x="90.5000" y="195.5000" />
+                        
+                        <vertex x="24.0000" y="218.0000" />
+                        
+                        <vertex x="131.0000" y="-153.0000" />
+                        
+                        <vertex x="172.0000" y="-129.0000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="-140.0000" y="-16.0000" />
+                        
+                        <vertex x="-115.0000" y="-88.0000" />
+                        
+                        <vertex x="-83.5000" y="-121.5000" />
+                        
+                        <vertex x="-17.0000" y="212.0000" />
+                        
+                        <vertex x="-113.5000" y="150.5000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="131.0000" y="-153.0000" />
+                        
+                        <vertex x="24.0000" y="218.0000" />
+                        
+                        <vertex x="-15.5000" y="204.5000" />
+                        
+                        <vertex x="-3.0000" y="-214.0000" />
+                        
+                        <vertex x="39.5000" y="-216.5000" />
+                        
+                        <vertex x="107.0000" y="-186.0000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="-17.5000" y="-215.5000" />
+                        
+                        <vertex x="-3.0000" y="-214.0000" />
+                        
+                        <vertex x="-15.5000" y="204.5000" />
+                        
+                        <vertex x="-17.0000" y="212.0000" />
+                        
+                        <vertex x="-83.5000" y="-121.5000" />
+                        
+                        <vertex x="-83.5000" y="-142.5000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="39.5000" y="-216.5000" />
+                        
+                        <vertex x="-3.0000" y="-215.0000" />
+                        
+                        <vertex x="-9.5000" y="-217.5000" />
+                        
+                    </polygon>
+                    
+                    <polygon>
+                        
+                        <vertex x="39.5000" y="-216.5000" />
+                        
+                        <vertex x="-3.0000" y="-214.0000" />
+                        
+                        <vertex x="-3.0000" y="-215.0000" />
+                        
+                    </polygon>
+                    
+
+            </fixture>
+            
+		</body>
+    
+	</bodies>
+	<metadata>
+		<format>1</format>
+		<ptm_ratio></ptm_ratio>
+	</metadata>
+</bodydef>

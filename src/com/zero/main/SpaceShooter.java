@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.zero.objects.BigAsteroid;
 import com.zero.objects.DummyPlane;
 import com.zero.objects.Enemy;
 import com.zero.objects.Plane;
@@ -78,6 +79,9 @@ public class SpaceShooter implements ApplicationListener {
                 Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
                 manager.addEntity(enemy);
                 
+        BigAsteroid asteroid = new BigAsteroid(atlas, "asteroid-big", 30f, 0f);
+        manager.addEntity(asteroid);
+        
 		Walls walls = new Walls(manager);
 		walls.generateWalls();
 		

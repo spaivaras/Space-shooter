@@ -12,17 +12,17 @@ public class MainDesktop {
 		
 //            Settings settings = new Settings();
 //            settings.padding = 2;
-//            settings.maxWidth = 1024;
-//            settings.maxHeight = 1024;
-//            settings.incremental = true;
+//            settings.maxWidth = 2116;
+//            settings.maxHeight = 2116;
+//            settings.incremental = false;
 //            TexturePacker.process(settings, "res", "res-packed");
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.vSyncEnabled = false;
 		config.useCPUSynch = false;
 		config.title = "Space shooter v0.0.1";
-		config.width = 800;
-		config.height = 600;
+		config.width = 1024;
+		config.height = 768;
 		config.useGL20 = true;
 		new LwjglApplication(new SpaceShooter(), config);
 	}
