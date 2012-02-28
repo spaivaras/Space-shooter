@@ -1,5 +1,7 @@
 package com.zero.objects;
 
+import java.util.Random;
+
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
 
@@ -151,10 +153,14 @@ public class Plane extends Entity
 
 	@Override
 	public void hit() {
-		// TODO Auto-generated method stub
-
+		manager.playSound("hit", 2.5f, 0.2f, false);
 	}
 
+	public void hit(Entity newTarget) {
+		hit();
+		newTarget.deactivate();
+	}
+	
 	@Override
 	protected void createLights() {
 		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 5f, 0f, 0f);

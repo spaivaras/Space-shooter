@@ -5,6 +5,8 @@ import java.util.Random;
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -23,6 +25,10 @@ public class Enemy extends Entity {
 	public static final float REV_THRUSTER_FACTOR = 50f;
 	public static final float APPROACH_DISTANCE = 10f;
 
+	
+	public static final float SHOT_DELAY = 0.5f;
+	private Boolean shotDelayOn = false;
+	private float shotCounter = 0;
 	private Boolean colored = false;
 	private int colorCycleCount = MAX_COLOR_CYCLE_COUNT;
 	private float colorCycleTime = 0;
@@ -40,6 +46,12 @@ public class Enemy extends Entity {
 
 	@Override
 	public void updatePosition(float delta) {
+		if (shotDelayOn && shotCounter < SHOT_DELAY) {
+			shotCounter += delta;
+		} else if(shotDelayOn && shotCounter >= SHOT_DELAY) {
+			shotDelayOn = false;
+			shotCounter = 0;
+		}
 		if(colorCycleCount < MAX_COLOR_CYCLE_COUNT) {
 			colorCycleTime  += delta;
 			if (colorCycleTime >= COLOR_CHANGE_TIME ) {
@@ -83,6 +95,12 @@ public class Enemy extends Entity {
 				body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
 			} else {
 				body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+				if(!shotDelayOn) {
+					shotDelayOn = true;	
+					
+					Bullet laser = new Bullet(atlas, "laser", this);
+					manager.addEntity(laser);					
+				}
 			}
 		}
 		
@@ -188,5 +206,9 @@ public class Enemy extends Entity {
 	@Override
 	protected void removeCustomLights() {
 		this.headLamp.remove();
+	}
+
+	public void deactivate() {
+		this.activate = false;
 	}
 }

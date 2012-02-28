@@ -63,6 +63,9 @@ public abstract class Entity {
         }
 	protected abstract void createLights();
 	protected abstract void removeCustomLights();
+	public void deactivate() {
+		
+	}
 	
 	public void update(float delta) {
 		
