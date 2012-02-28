@@ -33,6 +33,7 @@ public class Manager implements ContactListener {
 	private static Manager manager;
 	private CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
 	private ArrayList<Entity> needsToBeRemoved = new ArrayList<Entity>();
+	private ArrayList<Entity> needsToBeAdded = new ArrayList<Entity>();
 	private HashMap<String, Sound> sounds;
 
 	protected World world = null;
@@ -90,9 +91,16 @@ public class Manager implements ContactListener {
 		}
 
 		needsToBeRemoved.clear();
-
+		
 		for (Entity entity : entities) {
 			entity.update(delta);
+		}
+		
+		if(world.isLocked()) {
+			for(Entity entity : needsToBeAdded) {
+				this.addEntity(entity);
+			}
+			needsToBeAdded.clear();
 		}
 	}
 
@@ -183,25 +191,34 @@ public class Manager implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
+		
+	}
+
+	public void addEntityNext(Entity entity) {
+		needsToBeAdded.add(entity);
+	}
+	
+	public void removeEntityNex(Entity entity) {
+		needsToBeRemoved.add(entity);
+	}
+	
+	@Override
+	public void endContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
 		Body b = contact.getFixtureB().getBody();
 
-		if (b.getUserData() != null 
-				&& a.getUserData() != null 
-				&& needsToBeRemoved.indexOf((Entity)b.getUserData()) == -1) {
+		  if (b.getUserData() != null 
+		    && a.getUserData() != null 
+		    && needsToBeRemoved.indexOf((Entity)b.getUserData()) == -1) {
 
-			Entity caller = (Entity)b.getUserData();
-			Entity receiver = (Entity)a.getUserData();
-			Boolean shouldRemove = caller.collision(receiver);
+		   Entity caller = (Entity)b.getUserData();
+		   Entity receiver = (Entity)a.getUserData();
+		   Boolean shouldRemove = caller.collision(receiver);
 
-			if (shouldRemove) {
-				needsToBeRemoved.add(caller);
-			}
-		}
-	}
-
-	@Override
-	public void endContact(Contact contact) {
+		   if (shouldRemove) {
+		    needsToBeRemoved.add(caller);
+		   }
+		  }
 	}
 
 	@Override

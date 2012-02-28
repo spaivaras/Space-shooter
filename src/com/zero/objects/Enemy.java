@@ -34,9 +34,12 @@ public class Enemy extends Entity {
 	private float colorCycleTime = 0;
 	private Color colorOverlay;
 	private ConeLight headLamp;
-
+	
+	protected Boolean wasMoving = false;
 	protected Entity target;
-
+	protected int life = 2;
+	
+	
 	protected Boolean activate = false;
 
 	public Enemy(TextureAtlas atlas, String name, Float x, Float y) {
@@ -89,12 +92,15 @@ public class Enemy extends Entity {
 			} else if(reverseAngle > angleToTarget) {
 				body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
 			}
-
+			
 			Float distance = body.getWorldCenter().dst(target.getBody().getWorldCenter());
 			if (distance > APPROACH_DISTANCE) {
 				body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
+				wasMoving = true;
 			} else {
-				body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+				if(wasMoving) {
+					body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+				}
 				if(!shotDelayOn) {
 					shotDelayOn = true;	
 					
@@ -177,6 +183,15 @@ public class Enemy extends Entity {
 
 	@Override
 	public void hit() {
+		life--;
+		if(life <= 0) {
+			//Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
+			//manager.addEntity(enemy);
+			//manager.removeEntity(this);
+			
+			manager.removeEntityNex(this);
+			//manager.addEntityNext(new Enemy(atlas, "plane", 0f, -5f));
+		}
 		Random randomizer = new Random();
 
 		colorOverlay = new Color(randomizer.nextFloat(), randomizer.nextFloat(), randomizer.nextFloat(), 1.0f);
@@ -209,6 +224,7 @@ public class Enemy extends Entity {
 	}
 
 	public void deactivate() {
+		this.wasMoving = false;
 		this.activate = false;
 	}
 }
