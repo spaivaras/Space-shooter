@@ -96,7 +96,7 @@ public class Manager implements ContactListener {
 			entity.update(delta);
 		}
 		
-		if(world.isLocked()) {
+		if(!world.isLocked()) {
 			for(Entity entity : needsToBeAdded) {
 				this.addEntity(entity);
 			}
@@ -257,7 +257,7 @@ public class Manager implements ContactListener {
 	}
 	
 	public void updateCameraPosition() {
-		if (camera == null || cameraController == null) {
+		if (camera == null || cameraController == null || cameraController.getBody() == null) {
 			return;
 		}
 		

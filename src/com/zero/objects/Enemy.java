@@ -190,7 +190,7 @@ public class Enemy extends Entity {
 			//manager.removeEntity(this);
 			
 			manager.removeEntityNex(this);
-			//manager.addEntityNext(new Enemy(atlas, "plane", 0f, -5f));
+			manager.addEntityNext(new Enemy(atlas, "plane", 0f, -5f));
 		}
 		Random randomizer = new Random();
 

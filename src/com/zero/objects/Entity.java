@@ -46,12 +46,6 @@ public abstract class Entity {
 		this.y = y;
 		
 		sprite = atlas.createSprite(name);
-		
-		createPhysicsBody();
-		if (body != null) {
-			body.setUserData(this);
-			createLights();
-		}
 	}
 	
 	public abstract void createPhysicsBody();
@@ -68,29 +62,30 @@ public abstract class Entity {
 	}
 	
 	public void update(float delta) {
-		
-		if (body.getAngle() >= FULL_REVOLUTION_RADS) {
-			body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
-		} else if (body.getAngle() <= -FULL_REVOLUTION_RADS) {
-			body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
+		if (body == null && !manager.getWorld().isLocked()) {
+			createPhysicsBody();
+			if (body != null) {
+				body.setUserData(this);
+				createLights();
+			}
 		}
 		
-		updatePosition(delta);
 		//Update sprite position from physics body position in the world
 		if (body != null) {
 			Vector2 position = body.getPosition();
 			x = position.x;
 			y = -position.y;
 			
-			if (body.getAngle() > FULL_REVOLUTION_RADS) {
+			if (body.getAngle() >= FULL_REVOLUTION_RADS) {
 				body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
-			} 
-			if (body.getAngle() < -FULL_REVOLUTION_RADS) {
+			} else if (body.getAngle() <= -FULL_REVOLUTION_RADS) {
 				body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
 			}
 			
 			sprite.setRotation((float)Math.toDegrees(  body.getAngle()  ) + angleDifference);
 		}
+		
+		updatePosition(delta);
 		
 		if (!shouldDraw) {
 			shouldDraw = true;
