@@ -1,6 +1,6 @@
 package com.zero.objects;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
@@ -13,38 +13,55 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.zero.guns.Gun;
+import com.zero.guns.Pistol;
+import com.zero.guns.RaptorLaser;
+import com.zero.guns.RepeaterLaser;
 import com.zero.main.PolygonParser;
 
 public class Plane extends Entity 
 {	
-	public static final float SHOT_DELAY = 0.2f;
 	public static final float ROTATE_SPEED_FACTOR = 110f;
 	public static final float THRUSTER_FACTOR = 170f;
 	public static final float BOOST_FACTOR = 1000f;
 	public static final float MAX_SPEED = 50f;
 	public static final float REV_THRUSTER_FACTOR = 50f;
 
-	private Boolean shotDelayOn = false;
-	private float shotCounter = 0;
 	private Sound thrusterSound = null;
 	private Sound revThrusterSound = null;
 	private Sound turboSound = null;
 	private ConeLight headLamp;
-	private Boolean boost = false;
+	private boolean boost = false;
+	private ArrayList<Gun> guns;
+	private int gunSelected = 0;
+	private boolean gunSwitched = false;
 	
 	
 	public Plane(TextureAtlas atlas, String name, Float x, Float y) {
 		super(atlas, name, x, y);
 		this.angleDifference = 180;
+		guns = new ArrayList<Gun>(3);
+		
+		guns.add(new RaptorLaser(this));
+		guns.add(new RepeaterLaser(this));
+		guns.add(new Pistol(this));
 	}
 
 	@Override
 	public void updatePosition(float delta) {
-		if (shotDelayOn && shotCounter < SHOT_DELAY) {
-			shotCounter += delta;
-		} else if(shotDelayOn && shotCounter >= SHOT_DELAY) {
-			shotDelayOn = false;
-			shotCounter = 0;
+	
+		guns.get(0).update(delta);
+		guns.get(1).update(delta);
+		guns.get(2).update(delta);
+		
+		if (Gdx.input.isKeyPressed(Keys.E) && !gunSwitched) {
+			gunSelected += 1;
+			if( gunSelected > 2) {
+				gunSelected = 0;
+			}
+			gunSwitched = true;
+		} else if(!Gdx.input.isKeyPressed(Keys.E)) {
+			gunSwitched = false;
 		}
 		
 		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
@@ -86,11 +103,8 @@ public class Plane extends Entity
 		if(Gdx.input.isKeyPressed(Keys.D)) {
 			body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
 		}
-		if(Gdx.input.isKeyPressed(Keys.SPACE) && !shotDelayOn) {
-			shotDelayOn = true;	
-			
-			Bullet laser = new Bullet(atlas, "laser", this);
-			manager.addEntity(laser);					
+		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
+			guns.get(gunSelected).shoot();
 		}
 		
 		if (this.headLamp != null) {
@@ -145,20 +159,10 @@ public class Plane extends Entity
 		body.setTransform(body.getPosition(), (float)Math.toRadians(180));
 	}
 
-	@Override
-	public Boolean collision(Entity with) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public void hit() {
 		manager.playSound("hit", 2.5f, 0.2f, false);
-	}
-
-	public void hit(Entity newTarget) {
-		hit();
-		newTarget.deactivate();
 	}
 	
 	@Override

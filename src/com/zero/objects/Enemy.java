@@ -5,13 +5,14 @@ import java.util.Random;
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.zero.ammunition.Ammunition;
+import com.zero.guns.Gun;
+import com.zero.guns.Pistol;
 import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
@@ -26,18 +27,17 @@ public class Enemy extends Entity {
 	public static final float APPROACH_DISTANCE = 10f;
 
 	
-	public static final float SHOT_DELAY = 0.5f;
-	private Boolean shotDelayOn = false;
-	private float shotCounter = 0;
 	private Boolean colored = false;
 	private int colorCycleCount = MAX_COLOR_CYCLE_COUNT;
 	private float colorCycleTime = 0;
 	private Color colorOverlay;
 	private ConeLight headLamp;
+	private Gun frontGun;
 	
 	protected Boolean wasMoving = false;
 	protected Entity target;
 	protected int life = 2;
+	
 	
 	
 	protected Boolean activate = false;
@@ -45,16 +45,12 @@ public class Enemy extends Entity {
 	public Enemy(TextureAtlas atlas, String name, Float x, Float y) {
 		super(atlas, name, x, y);
 		this.angleDifference = 180;
+		frontGun = new Pistol(this);
 	}
 
 	@Override
 	public void updatePosition(float delta) {
-		if (shotDelayOn && shotCounter < SHOT_DELAY) {
-			shotCounter += delta;
-		} else if(shotDelayOn && shotCounter >= SHOT_DELAY) {
-			shotDelayOn = false;
-			shotCounter = 0;
-		}
+		frontGun.update(delta);
 		if(colorCycleCount < MAX_COLOR_CYCLE_COUNT) {
 			colorCycleTime  += delta;
 			if (colorCycleTime >= COLOR_CHANGE_TIME ) {
@@ -101,12 +97,8 @@ public class Enemy extends Entity {
 				if(wasMoving) {
 					body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
 				}
-				if(!shotDelayOn) {
-					shotDelayOn = true;	
-					
-					Bullet laser = new Bullet(atlas, "laser", this);
-					manager.addEntity(laser);					
-				}
+				
+				frontGun.shoot();
 			}
 		}
 		
@@ -176,10 +168,6 @@ public class Enemy extends Entity {
 		body.setTransform(body.getPosition(), (float)Math.toRadians(180));
 	}
 
-	@Override
-	public Boolean collision(Entity with) {
-		return false;
-	}
 
 	@Override
 	public void hit() {
@@ -199,8 +187,10 @@ public class Enemy extends Entity {
 
 		manager.playSound("hit", 2.5f, 0.2f, false);
 	}
-	public void hit(Entity newTarget) {
-		this.target = newTarget;
+	public void firedAt(Ammunition bullet) {
+		
+		
+		this.target = bullet.getGun().getOwner();
 		this.activate = true;
 		
 		if (this.headLamp == null) {

@@ -4,7 +4,9 @@ Controls:
   W - Forward thrust
   S - Reverse thrust
   A - Rotate left
-  S - Rotate right
+  D - Rotate right
+  
+  E - Rotate thru weapons
 
   SPACE - Shoot lasers !!
   LSHIFT - Afterburners
@@ -19,6 +21,10 @@ Info:
   and fast moving bodies
   
   To wake up other plane, shoot it!
+  
+Attention:
+  2 new weapons added
+  and 1 new type of ammunition, enjoy :)
 
 --==----===----===----==--
 Objects specification:

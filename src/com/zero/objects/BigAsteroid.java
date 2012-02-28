@@ -40,14 +40,9 @@ public class BigAsteroid extends Entity {
 		body.setGravityScale(0.001f);
 	}
 
-	@Override
-	public Boolean collision(Entity with) {
-		return false;
-	}
 
 	@Override
 	public void hit() {
-	
 	}
 
 	@Override

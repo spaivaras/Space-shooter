@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.zero.ammunition.Ammunition;
 import com.zero.main.Manager;
 
-public abstract class Entity {
-	
+public abstract class Entity implements WorldObject {
 	
 	public static final float FULL_REVOLUTION_RADS = (float)Math.PI * 2;
 	
@@ -50,16 +50,20 @@ public abstract class Entity {
 	
 	public abstract void createPhysicsBody();
 	public abstract void updatePosition(float delta);
-	public abstract Boolean collision(Entity with);
 	public abstract void hit();
-        public void hit(Entity what) {
-            hit();
-        }
 	protected abstract void createLights();
 	protected abstract void removeCustomLights();
+	
 	public void deactivate() {
-		
 	}
+	
+	public boolean collision(WorldObject with) {
+		return false;
+	}
+	
+	public void firedAt(Ammunition bullet) {
+        hit();
+    }
 	
 	public void update(float delta) {
 		if (body == null && !manager.getWorld().isLocked()) {
@@ -74,7 +78,7 @@ public abstract class Entity {
 		if (body != null) {
 			Vector2 position = body.getPosition();
 			x = position.x;
-			y = -position.y;
+			y = position.y;
 			
 			if (body.getAngle() >= FULL_REVOLUTION_RADS) {
 				body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
@@ -102,6 +106,16 @@ public abstract class Entity {
 			sprite.setScale(1f / (float)Manager.PTM );
 			sprite.draw(manager.getBatch());
 		}
+	}
+	
+	public boolean dispose() {
+		if (body != null && !manager.getWorld().isLocked()) { 
+			manager.getWorld().destroyBody(body);
+			glowLight.remove();
+			removeCustomLights();
+			return true;
+		}
+		return false;
 	}
 	
 	public Float getX() {

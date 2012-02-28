@@ -80,11 +80,6 @@ public class DummyPlane extends Entity {
 	}
 
 	@Override
-	public Boolean collision(Entity with) {
-		return false;
-	}
-
-	@Override
 	public void hit() {
 		Random randomizer = new Random();
 

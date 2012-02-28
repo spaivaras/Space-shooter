@@ -2,6 +2,7 @@ package com.zero.main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import box2dLight.RayHandler;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.collision.Ray;
@@ -21,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.Entity;
+import com.zero.objects.WorldObject;
 
 
 
@@ -31,9 +34,9 @@ public class Manager implements ContactListener {
 	public static final float CAMERA_EDGE = 3f;
 
 	private static Manager manager;
-	private CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
-	private ArrayList<Entity> needsToBeRemoved = new ArrayList<Entity>();
-	private ArrayList<Entity> needsToBeAdded = new ArrayList<Entity>();
+	private CopyOnWriteArrayList<WorldObject> entities = new CopyOnWriteArrayList<WorldObject>();
+	private ArrayList<WorldObject> needsToBeRemoved = new ArrayList<WorldObject>();
+	private ArrayList<WorldObject> needsToBeAdded = new ArrayList<WorldObject>();
 	private HashMap<String, Sound> sounds;
 
 	protected World world = null;
@@ -41,6 +44,8 @@ public class Manager implements ContactListener {
 	protected RayHandler lightEngine = null;
 	protected OrthographicCamera camera;
 	protected Entity cameraController;
+
+	protected TextureAtlas mainAtlas;
 
 	protected Map _map;
 	private Texture texture;       
@@ -66,53 +71,46 @@ public class Manager implements ContactListener {
 
 
 	public void render() {
-		int x;
-		int y;
-		CopyOnWriteArrayList<Tile> map = this._map.getMap();
+		//		int x;
+		//		int y;
+		//		CopyOnWriteArrayList<Tile> map = this._map.getMap();
 
-		for(Tile tile : map) {
-			x =  tile.getX();
-			y =  tile.getY();
-			if(tile.getType() == 0 || tile.getType() == 1) {
+		//		for(Tile tile : map) {
+		//			x =  tile.getX();
+		//			y =  tile.getY();
+		//			if(tile.getType() == 0 || tile.getType() == 1) {
+		//
+		//				batch.draw(regions[tile.getType()], x, y, 0, 0, 32f, 32f, 1f / (float)Manager.PTM, 1f / (float)Manager.PTM, 90, true);
+		//			} 
+		//		}
 
-				batch.draw(regions[tile.getType()], x, y, 0, 0, 32f, 32f, 1f / (float)Manager.PTM, 1f / (float)Manager.PTM, 90, true);
-			} 
-		}
-
-		for (Entity entity : entities) {
+		for (WorldObject entity : entities) {
 			entity.draw();
 		}
 	}
 
 	public void update(float delta) {
 
-		for (Entity entity : needsToBeRemoved) {
-			removeEntity(entity);
-		}
-
-		needsToBeRemoved.clear();
-		
-		for (Entity entity : entities) {
-			entity.update(delta);
-		}
-		
-		if(!world.isLocked()) {
-			for(Entity entity : needsToBeAdded) {
-				this.addEntity(entity);
+		Iterator<WorldObject> itr = needsToBeRemoved.iterator(); 
+		while(itr.hasNext()) {
+			WorldObject entity = itr.next(); 
+			if (entity.dispose()) {
+				entities.remove(entity);
+				itr.remove();
 			}
-			needsToBeAdded.clear();
+		} 
+
+		if(!world.isLocked()) {
+			itr = needsToBeAdded.iterator(); 
+			while(itr.hasNext()) {
+				WorldObject entity = itr.next(); 
+				entities.add(entity);
+				itr.remove();
+			}
 		}
-	}
 
-	public void addEntity(Entity entity) {
-		entities.add(entity);
-	}
-
-	public void removeEntity(Entity entity) {
-		entities.remove(entity);
-		if (entity.getBody() != null) {
-			world.destroyBody(entity.getBody());
-			entity.removeLights();
+		for (WorldObject entity : entities) {
+			entity.update(delta);
 		}
 	}
 
@@ -161,7 +159,7 @@ public class Manager implements ContactListener {
 
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
 		Float screenX = coordWorld.x;
-		Float screenY = -coordWorld.y;
+		Float screenY = coordWorld.y;
 		return new Vector2(screenX, screenY);
 	}
 
@@ -176,49 +174,46 @@ public class Manager implements ContactListener {
 	private void loadSounds() {
 		sounds = new HashMap<String, Sound>();
 
-		Sound laser = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/laser.ogg"));
-		sounds.put("laser", laser); 
-
 		Sound thruster = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/thrust.ogg"));
 		sounds.put("thruster", thruster); 
 
 		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/hit.ogg"));
 		sounds.put("hit", hit);
-		
+
 		Sound turbo = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/turbo.ogg"));
 		sounds.put("turbo", turbo);
 	}
 
 	@Override
 	public void beginContact(Contact contact) {
-		
+
 	}
 
-	public void addEntityNext(Entity entity) {
+	public void addEntityNext(WorldObject entity) {
 		needsToBeAdded.add(entity);
 	}
-	
-	public void removeEntityNex(Entity entity) {
+
+	public void removeEntityNex(WorldObject entity) {
 		needsToBeRemoved.add(entity);
 	}
-	
+
 	@Override
 	public void endContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
 		Body b = contact.getFixtureB().getBody();
 
-		  if (b.getUserData() != null 
-		    && a.getUserData() != null 
-		    && needsToBeRemoved.indexOf((Entity)b.getUserData()) == -1) {
+		if (b.getUserData() != null 
+				&& a.getUserData() != null 
+				&& needsToBeRemoved.indexOf((WorldObject)b.getUserData()) == -1) {
 
-		   Entity caller = (Entity)b.getUserData();
-		   Entity receiver = (Entity)a.getUserData();
-		   Boolean shouldRemove = caller.collision(receiver);
+			WorldObject caller = (WorldObject)b.getUserData();
+			WorldObject receiver = (WorldObject)a.getUserData();
+			boolean shouldRemove = caller.collision(receiver);
 
-		   if (shouldRemove) {
-		    needsToBeRemoved.add(caller);
-		   }
-		  }
+			if (shouldRemove) {
+				needsToBeRemoved.add(caller);
+			}
+		}
 	}
 
 	@Override
@@ -251,30 +246,31 @@ public class Manager implements ContactListener {
 	public void setCamera(OrthographicCamera camera) {
 		this.camera = camera;
 	}
-	
+
 	public void clampCameraTo(Entity controller) {
 		this.cameraController = controller;
 	}
-	
+
 	public void updateCameraPosition() {
 		if (camera == null || cameraController == null || cameraController.getBody() == null) {
+			camera.update();
 			return;
 		}
-		
+
 		Ray posBorder = camera.getPickRay(Gdx.graphics.getWidth(), 0);
-		
+
 		Vector2 translateV = new Vector2();
-		
+
 		if (posBorder.origin.x - cameraController.getBody().getPosition().x < CAMERA_EDGE) {
 			translateV.x = CAMERA_EDGE - (posBorder.origin.x - cameraController.getBody().getPosition().x);
 		} 
 		if (posBorder.origin.y - cameraController.getBody().getPosition().y < CAMERA_EDGE) {
 			translateV.y = CAMERA_EDGE - (posBorder.origin.y - cameraController.getBody().getPosition().y);
 		}	
-		
+
 		camera.translate(translateV.x, translateV.y, 0f);
 		translateV.set(0f, 0f);
-		
+
 		Ray negBorder = camera.getPickRay(0, Gdx.graphics.getHeight());
 		if ( Math.abs(negBorder.origin.x - cameraController.getBody().getPosition().x) < CAMERA_EDGE) {
 			translateV.x = -(CAMERA_EDGE - Math.abs(negBorder.origin.x - cameraController.getBody().getPosition().x));
@@ -284,5 +280,13 @@ public class Manager implements ContactListener {
 		} 
 		camera.translate(translateV.x, translateV.y, 0f);
 		camera.update();
+	}
+
+	public TextureAtlas getTextureAtlas(String name) {
+		return mainAtlas;
+	}
+
+	public void setTextureAtlas(TextureAtlas atlas, String name) {
+		this.mainAtlas = atlas;
 	}
 }

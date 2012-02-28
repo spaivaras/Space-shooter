@@ -54,31 +54,33 @@ public class SpaceShooter implements ApplicationListener {
 		renderer = new Box2DDebugRenderer(true, true, true, true);
 		spriteBatch = renderer.batch;
 
-		this.createLights();Map map = new Map();
-		map.setBlockSize(Manager.PTM, Manager.PTM);		
-		map.generate();		
+		this.createLights();
+//		Map map = new Map();
+//		map.setBlockSize(Manager.PTM, Manager.PTM);		
+//		map.generate();		
 		manager = Manager.getInstance();
 
-		manager.setMap(map);
+		//manager.setMap(map);
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
 		manager.setLightEngine(lightEngine);
 		manager.setCamera(camera);
+		manager.setTextureAtlas(atlas, "main");
 
 		world.setContactListener(manager);
-
-		player = new Plane(atlas, "plane", -10f, -5f);
-		manager.addEntity(player);
+		
+		player = new Plane(atlas, "plane", 5f, 0f);
+		manager.addEntityNext(player);
 		manager.clampCameraTo(player);
 
 		//		DummyPlane dPlane = new DummyPlane(atlas, "plane", 5f, -5f);
 		//		manager.addEntity(dPlane);
 
 		Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
-		manager.addEntity(enemy);
-
+		manager.addEntityNext(enemy);
+//
 		BigAsteroid asteroid = new BigAsteroid(atlas, "asteroid-big", 30f, 0f);
-		manager.addEntity(asteroid);
+		manager.addEntityNext(asteroid);
 
 		//		Walls walls = new Walls(manager);
 		//		walls.generateWalls();
