@@ -16,7 +16,7 @@ public class RaptorLaser extends Gun {
 
 	@Override
 	public float getEnergyUse() {
-		return 0f;
+		return 1f;
 	}
 
 	@Override

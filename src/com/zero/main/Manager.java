@@ -22,8 +22,8 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.zero.interfaces.WorldObject;
 import com.zero.objects.Entity;
-import com.zero.objects.WorldObject;
 
 
 
@@ -31,7 +31,7 @@ public class Manager implements ContactListener {
 
 	//Pixel to meter ratio
 	public static final int PTM = 32;
-	public static final float CAMERA_EDGE = 3f;
+	public static final float CAMERA_EDGE = 6f;
 
 	private static Manager manager;
 	private CopyOnWriteArrayList<WorldObject> entities = new CopyOnWriteArrayList<WorldObject>();
@@ -163,7 +163,7 @@ public class Manager implements ContactListener {
 		return new Vector2(screenX, screenY);
 	}
 
-	public Vector2 translateCoordsToScreen(Vector2 coordWorld, Float offsetX, Float offsetY) {
+	public Vector2 translateCoordsToScreen(Vector2 coordWorld, float offsetX, float offsetY) {
 		Vector2 center = translateCoordsToScreen(coordWorld);
 		center.x -= offsetX;
 		center.y -= offsetY;
@@ -186,19 +186,6 @@ public class Manager implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
-
-	}
-
-	public void addEntityNext(WorldObject entity) {
-		needsToBeAdded.add(entity);
-	}
-
-	public void removeEntityNex(WorldObject entity) {
-		needsToBeRemoved.add(entity);
-	}
-
-	@Override
-	public void endContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
 		Body b = contact.getFixtureB().getBody();
 
@@ -214,6 +201,18 @@ public class Manager implements ContactListener {
 				needsToBeRemoved.add(caller);
 			}
 		}
+	}
+
+	public void addEntityNext(WorldObject entity) {
+		needsToBeAdded.add(entity);
+	}
+
+	public void removeEntityNex(WorldObject entity) {
+		needsToBeRemoved.add(entity);
+	}
+
+	@Override
+	public void endContact(Contact contact) {
 	}
 
 	@Override

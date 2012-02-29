@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.guns.Gun;
+import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
-import com.zero.objects.WorldObject;
 
 public abstract class Ammunition implements WorldObject {
 	

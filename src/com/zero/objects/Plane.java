@@ -9,7 +9,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -17,9 +20,10 @@ import com.zero.guns.Gun;
 import com.zero.guns.Pistol;
 import com.zero.guns.RaptorLaser;
 import com.zero.guns.RepeaterLaser;
+import com.zero.main.Manager;
 import com.zero.main.PolygonParser;
 
-public class Plane extends Entity 
+public class Plane extends Entity
 {	
 	public static final float ROTATE_SPEED_FACTOR = 110f;
 	public static final float THRUSTER_FACTOR = 170f;
@@ -36,9 +40,19 @@ public class Plane extends Entity
 	private int gunSelected = 0;
 	private boolean gunSwitched = false;
 	
+	private float energyLevel = 100f;
+	
+	private TextureRegion[] shipAnimationSprites;
+	private Animation shipAnimation;
+	private float stateTime = 0f;
+	
 	
 	public Plane(TextureAtlas atlas, String name, Float x, Float y) {
 		super(atlas, name, x, y);
+		
+		//sprite = atlas.createSprite(name);
+		
+		
 		this.angleDifference = 180;
 		guns = new ArrayList<Gun>(3);
 		
@@ -50,97 +64,15 @@ public class Plane extends Entity
 	@Override
 	public void updatePosition(float delta) {
 	
+		
 		guns.get(0).update(delta);
 		guns.get(1).update(delta);
 		guns.get(2).update(delta);
 		
-		if (Gdx.input.isKeyPressed(Keys.E) && !gunSwitched) {
-			gunSelected += 1;
-			if( gunSelected > 2) {
-				gunSelected = 0;
-			}
-			gunSwitched = true;
-		} else if(!Gdx.input.isKeyPressed(Keys.E)) {
-			gunSwitched = false;
-		}
 		
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
-			this.boost = true;
-		}
-		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || !Gdx.input.isKeyPressed(Keys.W)) {
-			if (turboSound != null) {
-				turboSound.stop();
-				turboSound = null;
-			}
-			boost = false;
-		}
-		if(Gdx.input.isKeyPressed(Keys.W)) {
-			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
-			if (thrusterSound == null) {
-				thrusterSound = manager.playSound("thruster", 1f, 0.3f, true);
-			}
-			if (boost && turboSound == null) {
-				turboSound = manager.playSound("turbo", 1f, 0.2f, false);
-			}
-			
-		} else if(thrusterSound != null) {
-			thrusterSound.stop();
-			thrusterSound = null;
-		}
-		if(Gdx.input.isKeyPressed(Keys.S)) {
-			body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
-			if (revThrusterSound == null) {
-				revThrusterSound = manager.playSound("thruster", 3f, 0.2f, true);
-			}
-		} else if(revThrusterSound != null) {
-			revThrusterSound.stop();
-			revThrusterSound = null;
-		}
-		
-		if(Gdx.input.isKeyPressed(Keys.A)) {
-			body.applyAngularImpulse(ROTATE_SPEED_FACTOR);
-		}
-		if(Gdx.input.isKeyPressed(Keys.D)) {
-			body.applyAngularImpulse(-ROTATE_SPEED_FACTOR);
-		}
-		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
-			guns.get(gunSelected).shoot();
-		}
-		
-		if (this.headLamp != null) {
-			this.headLamp.setDirection((float)Math.toDegrees( body.getAngle()) - 90f);
-		}
 	}
 
-	private Vector2 getThrustVector(Boolean reverse) {
-		double rads = body.getAngle() + Math.toRadians(270);
-		double factor;
-
-		if (reverse) {
-			factor = REV_THRUSTER_FACTOR;
-		} else {
-			factor = THRUSTER_FACTOR;
-			
-			if (boost) {
-				factor += BOOST_FACTOR;
-			}
-		}
-		
-		if (body.getLinearVelocity().len() > MAX_SPEED) {
-			return new Vector2(0f, 0f);
-		}
-
-		//x + d * cos(a)  y + d.sin(a)
-		double x = factor * Math.cos(rads);
-		double y = factor * Math.sin(rads);
-
-		Vector2 vector = new Vector2((float)x, (float)y);
-		if (reverse) {
-			return vector.mul(-1f);
-		}
-
-		return vector; 
-	}
+	
 
 	//Create physic based structures, body, shape, fixture
 	//and registers physics body to physics world
@@ -152,7 +84,7 @@ public class Plane extends Entity
 		body = manager.getWorld().createBody(bodyDef);
 
 		PolygonParser pp = new PolygonParser();
-		pp.parseEntity("plane", body, (short)0x0001);
+		pp.parseEntity(this.name, body, (short)0x0001);
 
 		body.setLinearDamping(0.6f);
 		body.setAngularDamping(0.9f);
@@ -167,7 +99,7 @@ public class Plane extends Entity
 	
 	@Override
 	protected void createLights() {
-		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 5f, 0f, 0f);
+		glowLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 7f, 0f, 0f);
 		glowLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
 		glowLight.attachToBody(body, 0f, 0f);
 		
@@ -179,5 +111,34 @@ public class Plane extends Entity
 	@Override
 	protected void removeCustomLights() {
 		this.headLamp.remove();
+	}
+	
+	public void draw() {
+		if (shouldDraw) {
+			sprite = new Sprite(shipAnimation.getKeyFrame(stateTime, true));
+			Vector2 screen = manager.translateCoordsToScreen(new Vector2(x, y), 
+					(float)this.sprite.getWidth() / 2, 
+					(float)this.sprite.getHeight() / 2);
+						
+			sprite.setRotation((float)Math.toDegrees(  body.getAngle()  ) + angleDifference);
+			
+			sprite.setPosition(screen.x, screen.y);
+			sprite.setScale(1f / (float)Manager.PTM );
+			sprite.draw(manager.getBatch());
+		}
+	}
+
+	@Override
+	public float getEnergyLevel() {
+		return energyLevel;
+	}
+
+	@Override
+	public boolean drawEnergy(float amount) {
+		if (energyLevel >= amount) {
+			energyLevel -= amount;
+			return true;
+		}
+		return false;
 	}
 }

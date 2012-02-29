@@ -1,32 +1,40 @@
+
 res1.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
-plane
+spaceships
   rotate: false
-  xy: 395, 2
-  size: 88, 121
-  orig: 122, 121
-  offset: 17, 0
-  index: -1
-hero
-  rotate: false
-  xy: 2, 444
-  size: 64, 64
-  orig: 64, 64
+  xy: 2, 2
+  size: 376, 600
+  orig: 376, 600
   offset: 0, 0
   index: -1
 asteroid-big
   rotate: false
-  xy: 2, 2
+  xy: 2, 604
   size: 391, 440
   orig: 391, 440
   offset: 0, 0
   index: -1
+plane
+  rotate: false
+  xy: 380, 2
+  size: 122, 121
+  orig: 122, 121
+  offset: 0, 0
+  index: -1
+hero
+  rotate: false
+  xy: 380, 125
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 laser
   rotate: false
-  xy: 68, 444
-  size: 7, 48
+  xy: 446, 125
+  size: 11, 50
   orig: 11, 50
-  offset: 2, 1
+  offset: 0, 0
   index: -1

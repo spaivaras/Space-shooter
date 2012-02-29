@@ -4,13 +4,15 @@ import box2dLight.Light;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.zero.ammunition.Ammunition;
+import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
 
-public abstract class Entity implements WorldObject {
+public abstract class Entity implements WorldObject, EnergyHolder {
 	
 	public static final float FULL_REVOLUTION_RADS = (float)Math.PI * 2;
 	
@@ -34,7 +36,6 @@ public abstract class Entity implements WorldObject {
 		this.atlas = atlas;
 		
 		manager = Manager.getInstance();
-		sprite = atlas.createSprite(name);
 	}
 	
 	public Entity(TextureAtlas atlas, String name, Float x, Float y) {
@@ -85,8 +86,9 @@ public abstract class Entity implements WorldObject {
 			} else if (body.getAngle() <= -FULL_REVOLUTION_RADS) {
 				body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
 			}
-			
-			sprite.setRotation((float)Math.toDegrees(  body.getAngle()  ) + angleDifference);
+			if (sprite != null) {
+				sprite.setRotation((float)Math.toDegrees(  body.getAngle()  ) + angleDifference);
+			}
 		}
 		
 		updatePosition(delta);
@@ -152,5 +154,6 @@ public abstract class Entity implements WorldObject {
 		}
 		this.removeCustomLights();
 	}
+	
 	
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.zero.ammunition.Ammunition;
 import com.zero.main.Manager;
+import com.zero.objects.EnergyHolder;
 import com.zero.objects.Entity;
 
 
@@ -35,6 +36,11 @@ public abstract class Gun implements Disposable {
 		if (reloading) {
 			return;
 		}
+		
+		if (!owner.drawEnergy(getEnergyUse())) {
+			return;
+		}
+		
 		Class<? extends Ammunition> bulletClass = getAmmunitionClass();
 		
 		try {
