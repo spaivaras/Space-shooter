@@ -68,21 +68,7 @@ public class SpaceShooter implements ApplicationListener {
 		player = new Player();
 		manager.clampCameraTo(player.getShip());
 		
-		enemy = new Enemy();
-		
-		
-//		player = new Plane(atlas, "player", 5f, 0f);
-//		manager.addEntityNext(player);
-//		manager.clampCameraTo(player);
-
-		//		DummyPlane dPlane = new DummyPlane(atlas, "plane", 5f, -5f);
-		//		manager.addEntity(dPlane);
-
-//		Enemy enemy = new Enemy(atlas, "plane", 0f, -5f);
-//		manager.addEntityNext(enemy);
-//		
-//		BigAsteroid asteroid = new BigAsteroid(atlas, "asteroid-big", 30f, 0f);
-//		manager.addEntityNext(asteroid);
+		enemy = new Enemy();		
 	
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
@@ -127,7 +113,7 @@ public class SpaceShooter implements ApplicationListener {
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		renderer.render(world, camera.combined);
+		//renderer.render(world, camera.combined);
 
 		spriteBatch.begin();
 		manager.render();

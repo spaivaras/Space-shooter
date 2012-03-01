@@ -3,6 +3,7 @@ package com.zero.ships;
 import box2dLight.Light;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -14,6 +15,9 @@ import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
 
 public abstract class Ship implements WorldObject, EnergyHolder {
+
+	public static final float FULL_REVOLUTION_RADS = (float)Math.PI * 2;
+	public static final float APPROACH_DISTANCE = 10;
 
 	protected float energyLevel = 0;
 	protected Sprite sprite = null;
@@ -37,8 +41,9 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	
 	protected Gun mainGun = null;
 	
-	@Override
-	public abstract void refilEnergy(float amount, float delta);
+	protected WorldObject target = null;
+	protected boolean shouldFollowTarget = false;
+	
 	protected abstract Sprite getCustomSprite();
 	protected abstract void createPhysicsBody();
 	protected abstract void createLight();
@@ -52,6 +57,11 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	protected abstract float getRotationFactor();
 	protected abstract float getMaxLinearSpeed();
 	protected abstract float getBoostFactor();
+	
+	public abstract void toggleLights();
+	public abstract void setLightColor(Color color);
+	
+	protected abstract float getBoostEnergyUsage();
 	
 	protected abstract void loadSounds();
 	protected abstract void playThrusterSound();
@@ -138,7 +148,28 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 			mainGun.update(delta);
 		}
 		
+		if (body.getAngle() >= FULL_REVOLUTION_RADS) {
+			body.setTransform(body.getPosition(), body.getAngle() - FULL_REVOLUTION_RADS);
+		} else if (body.getAngle() <= -FULL_REVOLUTION_RADS) {
+			body.setTransform(body.getPosition(), body.getAngle() + FULL_REVOLUTION_RADS);
+		}
+		
+		refilEnergy(delta);
+		
+		if (shouldFollowTarget && target != null) {
+			this.rotateToTarget();
+			this.flyToTarget();
+		}
+		
 		updateInternal(delta);
+		
+		if (leftRotationActive) {
+			body.applyAngularImpulse(this.getRotationFactor());
+		}
+		
+		if (rightRotationActive) {
+			body.applyAngularImpulse(-this.getRotationFactor());
+		}
 		
 		if (thrustersActive) {
 			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
@@ -161,14 +192,6 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 			this.stopRevThrusterSound();
 		}
 		
-		if (leftRotationActive) {
-			body.applyAngularImpulse(this.getRotationFactor());
-		}
-		
-		if (rightRotationActive) {
-			body.applyAngularImpulse(-this.getRotationFactor());
-		}
-		
 		thrustersActive = revThrustersActive = leftRotationActive = rightRotationActive = false;
 	}
 	
@@ -182,7 +205,11 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 			factor = this.getThrustersFactor();
 			
 			if (boostOn) {
-				factor += this.getBoostFactor();
+				if (this.drawEnergy(this.getBoostEnergyUsage())) {
+					factor += this.getBoostFactor();
+				} else {
+					boostOn = false;
+				}
 			}
 		}
 		
@@ -200,6 +227,45 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 		}
 
 		return vector; 
+	}
+	
+	private void rotateToTarget() {
+		Float angleToTarget = (float)Math.atan2(
+				(double)(body.getPosition().x - target.getBody().getPosition().x),
+				(double)(body.getPosition().y - target.getBody().getPosition().y)
+		);
+		
+		if (angleToTarget < 0) {
+			angleToTarget = FULL_REVOLUTION_RADS + angleToTarget;
+		}
+		
+		Float reverseAngle;
+		if (body.getAngle() < 0) {
+			reverseAngle = Math.abs(body.getAngle());
+		} else {
+			reverseAngle = FULL_REVOLUTION_RADS - Math.abs(body.getAngle());
+		}
+		
+		if (reverseAngle > angleToTarget && Math.abs(angleToTarget - reverseAngle) <= Math.PI) {
+			rotateLeft();
+		} else if(reverseAngle > angleToTarget) {
+			rotateRight();
+		} else if(reverseAngle < angleToTarget && Math.abs(angleToTarget - reverseAngle) <= Math.PI) {
+			rotateRight();
+		} else if(reverseAngle > angleToTarget) {
+			rotateLeft();
+		}
+	}
+	
+	private void flyToTarget() {
+		Float distance = body.getWorldCenter().dst(target.getBody().getWorldCenter());
+		if (distance > APPROACH_DISTANCE) {
+			goForward();
+		} else {
+			if(shouldFollowTarget) {
+				goBackwards();
+			}
+		}
 	}
 
 	@Override
@@ -223,8 +289,8 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 
 	@Override
 	public void firedAt(Ammunition bullet) {
-		// TODO Auto-generated method stub
-
+		manager.playSound("hit", 2f, 0.2f, false);
+		controller.shipWasHit(bullet.getGun().getOwner());
 	}
 	
 	public void goForward() {
@@ -251,5 +317,13 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	
 	public void boost(boolean on) {
 		boostOn = on;
+	}
+	
+	public void setTarget(WorldObject target) {
+		this.target = target;
+	}
+	
+	public void followTarget(boolean follow) {
+		shouldFollowTarget = follow;
 	}
 }

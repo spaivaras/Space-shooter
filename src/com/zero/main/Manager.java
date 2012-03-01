@@ -3,7 +3,6 @@ package com.zero.main;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import box2dLight.RayHandler;
 
@@ -23,7 +22,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.interfaces.WorldObject;
-import com.zero.objects.Entity;
 
 
 
@@ -34,7 +32,7 @@ public class Manager implements ContactListener {
 	public static final float CAMERA_EDGE = 6f;
 
 	private static Manager manager;
-	private CopyOnWriteArrayList<WorldObject> entities = new CopyOnWriteArrayList<WorldObject>();
+	private ArrayList<WorldObject> entities = new ArrayList<WorldObject>();
 	private ArrayList<WorldObject> needsToBeRemoved = new ArrayList<WorldObject>();
 	private ArrayList<WorldObject> needsToBeAdded = new ArrayList<WorldObject>();
 	private HashMap<String, Sound> sounds;
@@ -57,7 +55,6 @@ public class Manager implements ContactListener {
 
 	public void setMap(Map map) {
 		texture = new Texture(Gdx.files.internal("res/hero.png"));
-		//batch = new SpriteBatch();
 		regions[0] = new TextureRegion(texture, 0, 0, 32, 32);          // #3
 		regions[1] = new TextureRegion(texture, 32, 0, 32, 32);    // #4
 		regions[2] = new TextureRegion(texture, 0, 32, 32, 32);         // #5
@@ -114,7 +111,7 @@ public class Manager implements ContactListener {
 		}
 	}
 
-	public Sound playSound(String key, Float pitch, Float gain, Boolean loop) {
+	public Sound playSound(String key, float pitch, float gain, boolean loop) {
 		Sound temp = sounds.get(key);
 
 		if (temp != null) {

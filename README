@@ -1,4 +1,4 @@
-Space shooter v0.0.1 by joined forces
+Space shooter v0.0.2 by joined forces
 --==----===----===----==--
 Controls:
   W - Forward thrust
@@ -7,6 +7,7 @@ Controls:
   D - Rotate right
   
   E - Rotate thru weapons
+  L - Toggle lights
 
   SPACE - Shoot lasers !!
   LSHIFT - Afterburners

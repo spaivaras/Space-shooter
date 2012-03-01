@@ -20,7 +20,7 @@ public class MainDesktop {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.vSyncEnabled = false;
 		config.useCPUSynch = false;
-		config.title = "Space shooter v0.0.1";
+		config.title = "Space shooter v0.0.2";
 		config.width = 1024;
 		config.height = 768;
 		config.useGL20 = true;

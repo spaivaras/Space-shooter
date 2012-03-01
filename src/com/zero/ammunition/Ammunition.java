@@ -131,4 +131,8 @@ public abstract class Ammunition implements WorldObject {
 	}
 	
 	public void firedAt(Ammunition bullet) {}
+	
+	public Body getBody() {
+		return body;
+	}
 }

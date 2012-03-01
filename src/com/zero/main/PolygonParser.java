@@ -52,7 +52,7 @@ public class PolygonParser {
 					fixtureDef.friction = 0f;
 					fixtureDef.restitution = 0.3f;
 					fixtureDef.filter.categoryBits = filterBit;
-					fixtureDef.filter.maskBits = (short)~filterBit;
+					fixtureDef.filter.maskBits = (short)0xFFFF;
 					
 					body.createFixture(fixtureDef);
 					shape.dispose();

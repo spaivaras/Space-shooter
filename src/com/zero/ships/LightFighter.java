@@ -28,6 +28,8 @@ public class LightFighter extends Ship {
 	private static final int TEXTURE_WIDTH = 94;
 	private static final int TEXTURE_HEIGHT = 100;
 	private static final float ANIMATION_INTERVAL = 0.09f;
+	private static final Color DEFAULT_HEADLIGHT_COLOR = Color.ORANGE;
+	private static final float BASE_ENERGY_REGENERATION = 3f;
 	
 	private TextureRegion[] shipAnimationSprites;
 	private Animation shipAnimation;
@@ -82,8 +84,13 @@ public class LightFighter extends Ship {
 	}
 	
 	@Override
-	public void refilEnergy(float amount, float delta) {
-		// TODO Auto-generated method stub
+	public void refilEnergy(float delta) {
+		if (energyLevel < 100) {
+			energyLevel += (delta * BASE_ENERGY_REGENERATION);
+			if (energyLevel > 100) {
+				energyLevel = 100;
+			}
+		}
 
 	}
 
@@ -100,7 +107,7 @@ public class LightFighter extends Ship {
 		body = manager.getWorld().createBody(bodyDef);
 		
 		PolygonParser pp = new PolygonParser();
-		pp.parseEntity(NAME, body, (short)0x0001);
+		pp.parseEntity(NAME, body, controller.getCollisionBits());
 		
         body.setLinearDamping(0.6f);
 		body.setAngularDamping(0.9f);
@@ -110,12 +117,14 @@ public class LightFighter extends Ship {
 	@Override
 	protected void createLight() {
 		mainLight = new PointLight(manager.getLightEngine(), 128, new Color(1f, 1f, 1f, 0.5f), 7f, 0f, 0f);
-		mainLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
+		mainLight.setMaskBits(~body.getFixtureList().get(0).getFilterData().categoryBits);
 		mainLight.attachToBody(body, 0f, 0f);
+		mainLight.setActive(false);
 		
 		headLight = new ConeLight(manager.getLightEngine(), 128, new Color(Color.ORANGE), 30f, 0f, 0f, 0f, 20f);
 		headLight.attachToBody(body, 0, 0);
-		headLight.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
+		headLight.setMaskBits(~body.getFixtureList().get(0).getFilterData().categoryBits);
+		headLight.setActive(false);
 	}
 	
 	@Override
@@ -188,7 +197,7 @@ public class LightFighter extends Ship {
 		if (revThrusterSoundId > -1) {
 			return;
 		}
-		revThrusterSoundId = thrusterSound.loop(0.03f);
+		revThrusterSoundId = thrusterSound.loop(0.06f);
 		thrusterSound.setPitch(revThrusterSoundId, 4.0f);
 	}
 
@@ -207,7 +216,7 @@ public class LightFighter extends Ship {
 		if (boostSoundId > -1) {
 			return;
 		}
-		boostSoundId = boostSound.play(0.3f);
+		boostSoundId = boostSound.play(0.1f);
 		thrusterSound.setPitch(revThrusterSoundId, 2.0f);
 	}
 
@@ -229,5 +238,33 @@ public class LightFighter extends Ship {
 		}
 		
 		mainGun = arsenal.get(selectedGun);
+		
 	}
+
+	@Override
+	public void toggleLights() {
+		if (mainLight != null) {
+			mainLight.setActive(!mainLight.isActive());
+		}
+		
+		if (headLight != null) {
+			headLight.setActive(!headLight.isActive());
+		}
+	}
+	
+	public void setLightColor(Color color) {
+		if (color == null) {
+			color = DEFAULT_HEADLIGHT_COLOR;
+		}
+		
+		if (headLight != null) {
+			headLight.setColor(color);
+		}
+	}
+
+	@Override
+	protected float getBoostEnergyUsage() {
+		return 0.5f;		
+	}
+
 }
