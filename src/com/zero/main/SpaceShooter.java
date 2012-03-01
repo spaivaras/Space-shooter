@@ -42,6 +42,7 @@ public class SpaceShooter implements ApplicationListener {
 	private Enemy enemy;
 	private BitmapFont font;
 	private Matrix4 normalProjection = new Matrix4();
+	private ShaderRenderer test;
 
 	@Override
 	public void create() {
@@ -74,6 +75,9 @@ public class SpaceShooter implements ApplicationListener {
 		font.setColor(Color.WHITE);
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
+		
+		test = new ShaderRenderer();
+		test.create();
 	}
 
 	private void createCamera() {
@@ -139,7 +143,11 @@ public class SpaceShooter implements ApplicationListener {
 		}
 		
 		font.draw(spriteBatch, "Energy level: " + player.getShip().getEnergyLevel(), 10, Gdx.graphics.getHeight() - 20f);
+		
+		
 		spriteBatch.end();
+		
+		test.render(delta);
 	}
 
 	private void renderLights(Boolean worldSteped) {
