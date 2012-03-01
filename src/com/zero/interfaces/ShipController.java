@@ -1,5 +1,7 @@
 package com.zero.interfaces;
 
-public interface ShipController {
+import com.zero.ships.Ship;
 
+public interface ShipController {
+	public Ship getShip();
 }

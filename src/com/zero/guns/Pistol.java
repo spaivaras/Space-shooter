@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.zero.ammunition.Ammunition;
 import com.zero.ammunition.MetalRound;
 import com.zero.main.Manager;
-import com.zero.objects.Entity;
+import com.zero.ships.Ship;
 
 public class Pistol extends Gun {
 
-	public Pistol(Entity owner) {
+	public Pistol(Ship owner) {
 		super(owner);
 	}
 
@@ -33,7 +33,7 @@ public class Pistol extends Gun {
 	public Vector2 getNozzlePosition(float bulletHeight) {
 		Vector2 position = new Vector2();
 		position.x = 0f;
-		position.y = - owner.getHeight() / Manager.PTM / 2 - bulletHeight / Manager.PTM;
+		position.y = - owner.getSize().y / Manager.PTM / 2 - bulletHeight / Manager.PTM;
 		position = owner.getBody().getWorldPoint(position);
 		
 		return position;

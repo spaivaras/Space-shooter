@@ -43,7 +43,7 @@ public class Manager implements ContactListener {
 	protected SpriteBatch batch = null;
 	protected RayHandler lightEngine = null;
 	protected OrthographicCamera camera;
-	protected Entity cameraController;
+	protected WorldObject cameraController;
 
 	protected TextureAtlas mainAtlas;
 
@@ -246,7 +246,7 @@ public class Manager implements ContactListener {
 		this.camera = camera;
 	}
 
-	public void clampCameraTo(Entity controller) {
+	public void clampCameraTo(WorldObject controller) {
 		this.cameraController = controller;
 	}
 

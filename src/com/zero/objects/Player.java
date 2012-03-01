@@ -9,6 +9,7 @@ import com.zero.ships.Ship;
 
 public class Player implements ShipController {
 	private Ship ship = null;
+	private boolean weaponChanged = false;
 	
 	public Player() {
 		ship = new LightFighter(this, 0, 0);
@@ -19,61 +20,39 @@ public class Player implements ShipController {
 		
 		if(Gdx.input.isKeyPressed(Keys.W)) {
 			ship.goForward();
-			//body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
-			//stateTime += delta;
-			//if (thrusterSound == null) {
-			//	thrusterSound = manager.playSound("thruster", 1f, 0.3f, true);
-			//}
-			//if (boost && turboSound == null) {
-			//	turboSound = manager.playSound("turbo", 1f, 0.2f, false);
-			//}
-			
 		}
+		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
+			ship.boost(true);
+		}
+		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || !Gdx.input.isKeyPressed(Keys.W)) {
+			ship.boost(false);
+		}		
 		if(Gdx.input.isKeyPressed(Keys.S)) {
 			ship.goBackwards();
 		}
 		if(Gdx.input.isKeyPressed(Keys.A)) {
 			ship.rotateLeft();
 		}
-		
 		if(Gdx.input.isKeyPressed(Keys.D)) {
 			ship.rotateRight();
 		}
-		
-		
-		
-		
-		
-		
-		
+		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
+			ship.shootMainGun();
+		}
 		
 		if (Gdx.input.isKeyPressed(Keys.E)) {
-//			gunSelected += 1;
-//			if( gunSelected > 2) {
-//				gunSelected = 0;
-//			}
-//			gunSwitched = true;
-		} else if(!Gdx.input.isKeyPressed(Keys.E)) {
-		//	gunSwitched = false;
+			if (!weaponChanged) {
+				ship.changeMainWeapon();
+				weaponChanged = true;
+			}
+		} else {
+			weaponChanged = false;
 		}
-		
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) {
-		//	this.boost = true;
-		}
-		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || !Gdx.input.isKeyPressed(Keys.W)) {
-//			if (turboSound != null) {
-//				turboSound.stop();
-//				turboSound = null;
-//			}
-//			boost = false;
-		}
-		
-		
-		
-		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
-			//guns.get(gunSelected).shoot();
-		}
-		
+	}
+
+	@Override
+	public Ship getShip() {
+		return ship;
 	}
 }
 

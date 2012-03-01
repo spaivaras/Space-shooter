@@ -1,15 +1,23 @@
 package com.zero.ships;
 
+import java.util.ArrayList;
+
 import box2dLight.ConeLight;
 import box2dLight.Light;
 import box2dLight.PointLight;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.zero.guns.Gun;
+import com.zero.guns.Pistol;
+import com.zero.guns.RaptorLaser;
+import com.zero.guns.RepeaterLaser;
 import com.zero.interfaces.ShipController;
 import com.zero.main.PolygonParser;
 
@@ -19,7 +27,7 @@ public class LightFighter extends Ship {
 	private static final String TEXTURE_REGION = "spaceships";
 	private static final int TEXTURE_WIDTH = 94;
 	private static final int TEXTURE_HEIGHT = 100;
-	private static final float ANIMATION_INTERVAL = 0.1f;
+	private static final float ANIMATION_INTERVAL = 0.09f;
 	
 	private TextureRegion[] shipAnimationSprites;
 	private Animation shipAnimation;
@@ -27,12 +35,16 @@ public class LightFighter extends Ship {
 	
 	private Light headLight = null;
 	
+	private ArrayList<Gun> arsenal;
+	private int selectedGun = 0;
+	
 
 	public LightFighter(ShipController controller, float x, float y) {
 		super();
 		homeX = x;
 		homeY = y;
 		this.controller = controller;
+		energyLevel = 100f;
 	}
 	
 	@Override
@@ -40,6 +52,17 @@ public class LightFighter extends Ship {
 		if (shipAnimation == null) {
 			prepareSprites();
 		}
+		if (mainGun == null) {
+			arsenal = new ArrayList<Gun>(3);
+			
+			arsenal.add(new RaptorLaser(this));
+			arsenal.add(new RepeaterLaser(this));
+			arsenal.add(new Pistol(this));
+			
+			selectedGun = 0;
+			mainGun = arsenal.get(selectedGun);
+		}
+		
 		stateTime += delta;
 		
 		if (headLight != null) {
@@ -51,6 +74,11 @@ public class LightFighter extends Ship {
 		} else {
 			stateTime = 0;
 		}
+	}
+	
+	protected void loadSounds() {
+		thrusterSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/thrust.ogg"));
+		boostSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/turbo.ogg"));
 	}
 	
 	@Override
@@ -130,5 +158,76 @@ public class LightFighter extends Ship {
 	@Override
 	protected float getRotationFactor() {
 		return 110;
+	}
+	
+	protected float getBoostFactor() {
+		return 800;
+	}
+
+	@Override
+	protected void playThrusterSound() {
+		if (thrusterSoundId > -1) {
+			return;
+		}
+		thrusterSoundId = thrusterSound.loop(0.3f);
+		thrusterSound.setPitch(thrusterSoundId, 1.0f);
+	}
+
+	@Override
+	protected void stopThrusterSound() {
+		if (thrusterSoundId == -1) {
+			return;
+		}
+		
+		thrusterSound.stop(thrusterSoundId);
+		thrusterSoundId = -1;
+	}
+
+	@Override
+	protected void playRevThrusterSound() {
+		if (revThrusterSoundId > -1) {
+			return;
+		}
+		revThrusterSoundId = thrusterSound.loop(0.03f);
+		thrusterSound.setPitch(revThrusterSoundId, 4.0f);
+	}
+
+	@Override
+	protected void stopRevThrusterSound() {
+		if (revThrusterSoundId == -1) {
+			return;
+		}
+		
+		thrusterSound.stop(revThrusterSoundId);
+		revThrusterSoundId = -1;
+	}
+	
+	@Override
+	protected void playBoostSound() {
+		if (boostSoundId > -1) {
+			return;
+		}
+		boostSoundId = boostSound.play(0.3f);
+		thrusterSound.setPitch(revThrusterSoundId, 2.0f);
+	}
+
+	@Override
+	protected void stopBoostSound() {
+		if (boostSoundId == -1) {
+			return;
+		}
+		
+		boostSound.stop(boostSoundId);
+		boostSoundId = -1;
+	}
+
+	@Override
+	public void changeMainWeapon() {
+		selectedGun++;
+		if (selectedGun > 2) {
+			selectedGun = 0;
+		}
+		
+		mainGun = arsenal.get(selectedGun);
 	}
 }

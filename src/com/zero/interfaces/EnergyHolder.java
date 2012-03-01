@@ -1,4 +1,4 @@
-package com.zero.objects;
+package com.zero.interfaces;
 
 public interface EnergyHolder {
 	public float getEnergyLevel();

@@ -5,19 +5,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.zero.ammunition.Ammunition;
 import com.zero.main.Manager;
-import com.zero.objects.EnergyHolder;
-import com.zero.objects.Entity;
-
+import com.zero.ships.Ship;
 
 
 public abstract class Gun implements Disposable {
 	
-	protected Entity owner;
+	protected Ship owner;
 	protected Sound shotSound;
 	protected boolean reloading;
 	protected float timeReloading;
 
-	public Gun(Entity owner) {
+	public Gun(Ship owner) {
 		this.owner = owner;
 		this.loadSound();
 	}
@@ -56,7 +54,7 @@ public abstract class Gun implements Disposable {
 		reloading = true;
 	}
 	
-	public Entity getOwner() {
+	public Ship getOwner() {
 		return owner;
 	}
 	

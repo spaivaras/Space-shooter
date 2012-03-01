@@ -10,20 +10,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.zero.objects.BigAsteroid;
 import com.zero.objects.Enemy;
-import com.zero.objects.Plane;
 import com.zero.objects.Player;
-import com.zero.ships.LightFighter;
 
 public class SpaceShooter implements ApplicationListener {
 
@@ -44,6 +39,7 @@ public class SpaceShooter implements ApplicationListener {
 	private Manager manager;
 	private RayHandler lightEngine;
 	private Player player;
+	private Enemy enemy;
 	private BitmapFont font;
 	private Matrix4 normalProjection = new Matrix4();
 
@@ -70,6 +66,9 @@ public class SpaceShooter implements ApplicationListener {
 		world.setContactListener(manager);
 		
 		player = new Player();
+		manager.clampCameraTo(player.getShip());
+		
+		enemy = new Enemy();
 		
 		
 //		player = new Plane(atlas, "player", 5f, 0f);
@@ -123,9 +122,8 @@ public class SpaceShooter implements ApplicationListener {
 		
 		float delta  = Gdx.graphics.getDeltaTime();
 		player.update(delta);
+		enemy.update(delta);
 		manager.update(delta);
-		
-		
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
@@ -148,13 +146,13 @@ public class SpaceShooter implements ApplicationListener {
 				+ " - Native heap size: "
 				+ Math.round(Gdx.app.getNativeHeap() / 1024 / 1024) + " M", 10, 20);
 		
-//		if (player.getEnergyLevel() < 30) {
-//			font.setColor(Color.RED);
-//		} else {
-//			font.setColor(Color.BLUE);
-//		}
-//		
-//		font.draw(spriteBatch, "Energy level: " + player.getEnergyLevel(), 10, Gdx.graphics.getHeight() - 20f);
+		if (player.getShip().getEnergyLevel() < 30) {
+			font.setColor(Color.RED);
+		} else {
+			font.setColor(Color.BLUE);
+		}
+		
+		font.draw(spriteBatch, "Energy level: " + player.getShip().getEnergyLevel(), 10, Gdx.graphics.getHeight() - 20f);
 		spriteBatch.end();
 	}
 

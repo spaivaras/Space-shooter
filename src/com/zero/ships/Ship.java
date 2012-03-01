@@ -2,14 +2,16 @@ package com.zero.ships;
 
 import box2dLight.Light;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.ammunition.Ammunition;
+import com.zero.guns.Gun;
+import com.zero.interfaces.EnergyHolder;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
-import com.zero.objects.EnergyHolder;
 
 public abstract class Ship implements WorldObject, EnergyHolder {
 
@@ -25,7 +27,16 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	protected boolean revThrustersActive = false;
 	protected boolean leftRotationActive = false;
 	protected boolean rightRotationActive = false;
-
+	protected boolean boostOn = false;
+	
+	protected Sound thrusterSound = null;
+	protected Sound boostSound = null;
+	protected long thrusterSoundId = -1;
+	protected long revThrusterSoundId = -1;
+	protected long boostSoundId = -1;
+	
+	protected Gun mainGun = null;
+	
 	@Override
 	public abstract void refilEnergy(float amount, float delta);
 	protected abstract Sprite getCustomSprite();
@@ -33,14 +44,45 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	protected abstract void createLight();
 	protected abstract void updateInternal(float delta);
 	protected abstract void removeCustomLights();
+	
+	public abstract void changeMainWeapon();
+	
 	protected abstract float getThrustersFactor();
 	protected abstract float getRevThrustersFactor();
 	protected abstract float getRotationFactor();
 	protected abstract float getMaxLinearSpeed();
+	protected abstract float getBoostFactor();
 	
-
+	protected abstract void loadSounds();
+	protected abstract void playThrusterSound();
+	protected abstract void stopThrusterSound();
+	protected abstract void playRevThrusterSound();
+	protected abstract void stopRevThrusterSound();
+	protected abstract void playBoostSound();
+	protected abstract void stopBoostSound();
+	
 	public Ship() {
 		manager = Manager.getInstance();
+		this.loadSounds();
+	}
+	
+	public Body getBody() {
+		return body;
+	}
+	
+	public Vector2 getSize() {
+		Sprite customSprite;
+		if (sprite != null) {
+			customSprite = sprite;
+		} else {
+			customSprite = getCustomSprite();
+		}
+		
+		if (customSprite == null) {
+			return new Vector2(0f, 0f);
+		}
+		
+		return new Vector2(customSprite.getWidth(), customSprite.getHeight());
 	}
 	
 	@Override
@@ -51,7 +93,6 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 		}
 		return false;
 	}
-
 	
 	public float getEnergyLevel() {
 		return energyLevel;
@@ -93,14 +134,31 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 				this.createLight();
 			}
 		}
-
+		if (mainGun != null) {
+			mainGun.update(delta);
+		}
+		
 		updateInternal(delta);
+		
 		if (thrustersActive) {
 			body.applyLinearImpulse(getThrustVector(false), body.getWorldCenter());
+			this.playThrusterSound();
+			if (boostOn) {
+				this.playBoostSound();
+			}
+		} else {
+			this.stopThrusterSound();
+		}
+		
+		if (!boostOn) {
+			this.stopBoostSound();
 		}
 		
 		if (revThrustersActive) {
 			body.applyLinearImpulse(getThrustVector(true), body.getWorldCenter());
+			this.playRevThrusterSound();
+		} else {
+			this.stopRevThrusterSound();
 		}
 		
 		if (leftRotationActive) {
@@ -123,9 +181,9 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 		} else {
 			factor = this.getThrustersFactor();
 			
-//			if (boost) {
-//				factor += BOOST_FACTOR;
-//			}
+			if (boostOn) {
+				factor += this.getBoostFactor();
+			}
 		}
 		
 		if (body.getLinearVelocity().len() > this.getMaxLinearSpeed()) {
@@ -184,5 +242,14 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	public void rotateRight() {
 		rightRotationActive = true;
 	}
-
+	
+	public void shootMainGun() {
+		if (mainGun != null) {
+			mainGun.shoot();
+		}
+	}
+	
+	public void boost(boolean on) {
+		boostOn = on;
+	}
 }

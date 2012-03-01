@@ -8,11 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.zero.ammunition.Ammunition;
 import com.zero.ammunition.Beam;
 import com.zero.main.Manager;
-import com.zero.objects.Entity;
+import com.zero.ships.Ship;
 
 public class RepeaterLaser extends Gun {
 
-	public RepeaterLaser(Entity owner) {
+	public RepeaterLaser(Ship owner) {
 		super(owner);
 	}
 
@@ -35,7 +35,7 @@ public class RepeaterLaser extends Gun {
 	public Vector2 getNozzlePosition(float bulletHeight) {
 		Vector2 position = new Vector2();
 		position.x = 0f;
-		position.y = - owner.getHeight() / Manager.PTM / 2 - bulletHeight / Manager.PTM;
+		position.y = - owner.getSize().y / Manager.PTM / 2 - bulletHeight / Manager.PTM;
 		position = owner.getBody().getWorldPoint(position);
 		
 		return position;
