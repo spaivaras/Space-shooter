@@ -1,6 +1,7 @@
-package com.zero.main;
+package com.zero.shaders;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,14 +11,40 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-public class ShaderRenderer {
+public abstract class ShaderRenderer {
 
-	private ShaderProgram shaderProgram;
-	private Mesh mesh;
-	float time;
-	Texture texture;
+	protected String vertexShaderFile, fragmentShaderFile;
+	protected String vertexShader, fragmentShader;
 	
-	public void create() {
+	public ShaderRenderer() {
+		if (!Gdx.app.getGraphics().isGL20Available()) {
+			throw new GdxRuntimeException("GLES2 Not Available!");
+		}
+	}
+
+	public void setVertexShaderFromFile(String file) {
+		this.vertexShaderFile = file;
+		String tmp = Gdx.files.internal("res/shaders/"+ this.vertexShaderFile).readString();
+		this.setVertexShader(tmp);
+	}
+	
+	public void setFragmentShaderFromFile(String file) {
+		this.fragmentShaderFile = file;
+		String tmp = Gdx.files.internal("res/shaders/"+ this.fragmentShaderFile).readString();
+		this.setFragmentShader(tmp);
+	}
+	
+	public void setVertexShader(String vertexShader) {
+		this.vertexShader = vertexShader;
+	}
+	
+	public void setFragmentShader(String fragmentShader) {
+		this.fragmentShader = fragmentShader;
+	}
+	
+	public abstract void create();
+	public abstract void render(float delta);
+	/*{
 		//Uzkraunam textura is faiko, kuria kabinsim prie shaderio uniformos
 		texture = new Texture(Gdx.files.internal("res/shader_test.jpg"),true);
     	
@@ -108,8 +135,10 @@ public class ShaderRenderer {
         
         //Vienas idomus dalykas kad mesha paisant centras yra 0.0 o ekrano puse = 1
 	}
+	*/
 	
-	public void render(float delta) {
+	/*
+	{
 		time += delta;
 
 		shaderProgram.begin();
@@ -125,5 +154,6 @@ public class ShaderRenderer {
 		mesh.render(shaderProgram, GL20.GL_TRIANGLE_FAN);
 		shaderProgram.end();		
 	}
+	*/
 	
 }

@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.Enemy;
 import com.zero.objects.Player;
+import com.zero.shaders.MapShader;
 
 public class SpaceShooter implements ApplicationListener {
 
@@ -42,7 +43,7 @@ public class SpaceShooter implements ApplicationListener {
 	private Enemy enemy;
 	private BitmapFont font;
 	private Matrix4 normalProjection = new Matrix4();
-	private ShaderRenderer test;
+	protected MapShader map;
 
 	@Override
 	public void create() {
@@ -76,8 +77,8 @@ public class SpaceShooter implements ApplicationListener {
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		
-		test = new ShaderRenderer();
-		test.create();
+		map = new MapShader();
+		map.create();
 	}
 
 	private void createCamera() {
@@ -104,19 +105,22 @@ public class SpaceShooter implements ApplicationListener {
 	public void render() {
 		//Some strange way to limit fps
 		Display.sync(200);
+		
+		
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
+		
+		float delta  = Gdx.graphics.getDeltaTime();
+		
+		map.render(delta);
 		manager.updateCameraPosition();
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
 		
-		float delta  = Gdx.graphics.getDeltaTime();
 		player.update(delta);
 		enemy.update(delta);
 		manager.update(delta);
-		
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
 		//renderer.render(world, camera.combined);
 
 		spriteBatch.begin();
@@ -147,7 +151,6 @@ public class SpaceShooter implements ApplicationListener {
 		
 		spriteBatch.end();
 		
-		test.render(delta);
 	}
 
 	private void renderLights(Boolean worldSteped) {
