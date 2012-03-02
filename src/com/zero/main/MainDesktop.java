@@ -24,7 +24,7 @@ public class MainDesktop {
 		config.width = 1024;
 		config.height = 768;
 		config.useGL20 = true;
-		new LwjglApplication(new SpaceShooter(), config);
+		new LwjglApplication(new SpaceShooter2(), config);
 	}
 
 }

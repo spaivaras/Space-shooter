@@ -9,6 +9,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -43,10 +44,13 @@ public class SpaceShooter implements ApplicationListener {
 	private Enemy enemy;
 	private BitmapFont font;
 	private Matrix4 normalProjection = new Matrix4();
-	protected MapShader map;
+	private MapShader map;
 
 	@Override
 	public void create() {
+		map = new MapShader();
+		map.create();
+		
 		this.createCamera();
 
 		TextureAtlas atlas;
@@ -54,6 +58,7 @@ public class SpaceShooter implements ApplicationListener {
 
 		world = new World(new Vector2(0, 0), true);
 		renderer = new Box2DDebugRenderer(true, true, true, true);
+		
 		spriteBatch = renderer.batch;
 
 		this.createLights();	
@@ -77,8 +82,6 @@ public class SpaceShooter implements ApplicationListener {
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		
-		map = new MapShader();
-		map.create();
 	}
 
 	private void createCamera() {
@@ -106,14 +109,14 @@ public class SpaceShooter implements ApplicationListener {
 		//Some strange way to limit fps
 		Display.sync(200);
 		
-		
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
 		
 		float delta  = Gdx.graphics.getDeltaTime();
-		
-		map.render(delta);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		manager.updateCameraPosition();
+		map.render(0.005f);
+		
+		
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 
@@ -124,14 +127,14 @@ public class SpaceShooter implements ApplicationListener {
 		//renderer.render(world, camera.combined);
 
 		spriteBatch.begin();
-		manager.render();
+			manager.render();
 		spriteBatch.end();
 
 		this.renderLights(stepped);
 
 		spriteBatch.setProjectionMatrix(normalProjection);
+		
 		spriteBatch.begin();
-
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, "FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond())
 				+ " - GLes 2.0: " + Gdx.graphics.isGL20Available()
@@ -150,6 +153,7 @@ public class SpaceShooter implements ApplicationListener {
 		
 		
 		spriteBatch.end();
+		
 		
 	}
 

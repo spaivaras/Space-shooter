@@ -15,6 +15,7 @@ public abstract class ShaderRenderer {
 
 	protected String vertexShaderFile, fragmentShaderFile;
 	protected String vertexShader, fragmentShader;
+	protected FileHandle vertexF, fragmentF;
 	
 	public ShaderRenderer() {
 		if (!Gdx.app.getGraphics().isGL20Available()) {
@@ -24,13 +25,15 @@ public abstract class ShaderRenderer {
 
 	public void setVertexShaderFromFile(String file) {
 		this.vertexShaderFile = file;
-		String tmp = Gdx.files.internal("res/shaders/"+ this.vertexShaderFile).readString();
+		this.vertexF = Gdx.files.internal("res/shaders/"+ this.vertexShaderFile);
+		String tmp = this.vertexF.readString();
 		this.setVertexShader(tmp);
 	}
 	
 	public void setFragmentShaderFromFile(String file) {
 		this.fragmentShaderFile = file;
-		String tmp = Gdx.files.internal("res/shaders/"+ this.fragmentShaderFile).readString();
+		this.fragmentF = Gdx.files.internal("res/shaders/"+ this.fragmentShaderFile); 
+		String tmp = this.fragmentF.readString();
 		this.setFragmentShader(tmp);
 	}
 	
@@ -40,6 +43,14 @@ public abstract class ShaderRenderer {
 	
 	public void setFragmentShader(String fragmentShader) {
 		this.fragmentShader = fragmentShader;
+	}
+	
+	public FileHandle getVertexFile() {
+		return this.vertexF;
+	}
+	
+	public FileHandle getFragmentFile() {
+		return this.fragmentF;
 	}
 	
 	public abstract void create();
