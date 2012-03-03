@@ -22,8 +22,8 @@ public class RepeaterLaser extends Gun {
 	}
 	
 	@Override
-	public float getDamage() {
-		return 0f;
+	public float getDamageModifier() {
+		return 0.75f;
 	}
 
 	@Override

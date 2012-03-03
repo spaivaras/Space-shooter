@@ -71,6 +71,11 @@ public class MetalRound extends Ammunition {
 	protected float getLifeTime() {
 		return 0.3f;
 	}
+	
+	@Override
+	public float getAmmunitionDamage() {
+		return 50f;
+	}
 
 	@Override
 	protected void createLight() {

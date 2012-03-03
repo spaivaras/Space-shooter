@@ -1,6 +1,7 @@
 package com.zero.ships;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import box2dLight.ConeLight;
 import box2dLight.Light;
@@ -81,6 +82,7 @@ public class LightFighter extends Ship {
 	protected void loadSounds() {
 		thrusterSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/thrust.ogg"));
 		boostSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/turbo.ogg"));
+		deathSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/death.wav"));
 	}
 	
 	@Override
@@ -174,6 +176,13 @@ public class LightFighter extends Ship {
 	}
 
 	@Override
+	protected void playDeathSound() {
+
+		long dsi = deathSound.play(1.5f);
+		deathSound.setPitch(dsi, 0.7f);
+	}
+	
+	@Override
 	protected void playThrusterSound() {
 		if (thrusterSoundId > -1) {
 			return;
@@ -243,6 +252,7 @@ public class LightFighter extends Ship {
 
 	@Override
 	public void toggleLights() {
+		if (!isAlive) {return;}
 		if (mainLight != null) {
 			mainLight.setActive(!mainLight.isActive());
 		}
@@ -253,6 +263,7 @@ public class LightFighter extends Ship {
 	}
 	
 	public void setLightColor(Color color) {
+		if (!isAlive) {return;}
 		if (color == null) {
 			color = DEFAULT_HEADLIGHT_COLOR;
 		}
@@ -267,4 +278,15 @@ public class LightFighter extends Ship {
 		return 0.5f;		
 	}
 
+	@Override
+	protected void disposeGuns() {
+
+		Iterator<Gun> itr = arsenal.iterator(); 
+		while(itr.hasNext()) {
+			Gun gun = itr.next(); 
+			gun.dispose();
+		} 
+		
+		arsenal.clear();
+	}
 }

@@ -10,7 +10,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.zero.interfaces.EmmiterController;
 import com.zero.interfaces.WorldObject;
 
 
@@ -42,11 +42,10 @@ public class Manager implements ContactListener {
 	protected SpriteBatch batch = null;
 	protected RayHandler lightEngine = null;
 	protected OrthographicCamera camera;
+	protected OrthographicCamera noZoomCamera;
 	protected WorldObject cameraController;
 
 	protected TextureAtlas mainAtlas;
-	
-	protected ParticleEffect editor;
 
 	protected Map _map;
 	private Texture texture;       
@@ -54,10 +53,8 @@ public class Manager implements ContactListener {
 
 	private Manager() {
 		loadSounds();
-		editor = new ParticleEffect();
-		editor.load(Gdx.files.internal("res/emmiters/explosion.emmiter"), Gdx.files.internal("res/textures"));
-		editor.setPosition(512, 384);
-		editor.start();
+		loadAtlases();
+		createCameras();
 	}
 
 	public void setMap(Map map) {
@@ -92,9 +89,13 @@ public class Manager implements ContactListener {
 			entity.draw();
 		}
 	}
-
-	public void renderExplosion() {
-		editor.draw(this.batch);
+	
+	public void renderEmmiters() {
+		for (WorldObject entity : entities) {
+			if (entity instanceof EmmiterController) {
+				((EmmiterController) entity).drawEmmiters();
+			}
+		}
 	}
 	
 	public void update(float delta) {
@@ -120,7 +121,6 @@ public class Manager implements ContactListener {
 		for (WorldObject entity : entities) {
 			entity.update(delta);
 		}
-		editor.update(delta);
 	}
 
 	public Sound playSound(String key, float pitch, float gain, boolean loop) {
@@ -169,7 +169,7 @@ public class Manager implements ContactListener {
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld) {
 		Float screenX = coordWorld.x;
 		Float screenY = coordWorld.y;
-		return new Vector2(screenX, screenY);
+		return new Vector2(screenX, screenY).mul(PTM);
 	}
 
 	public Vector2 translateCoordsToScreen(Vector2 coordWorld, float offsetX, float offsetY) {
@@ -184,6 +184,10 @@ public class Manager implements ContactListener {
 		sounds = new HashMap<String, Sound>();
 		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/hit.ogg"));
 		sounds.put("hit", hit);
+	}
+	
+	private void loadAtlases() {
+		mainAtlas =  new TextureAtlas(Gdx.files.internal("res/atlases/pack"));
 	}
 
 	@Override
@@ -240,10 +244,6 @@ public class Manager implements ContactListener {
 		this.lightEngine = lightEngine;
 	}
 
-	public OrthographicCamera getCamera() {
-		return camera;
-	}
-
 	public void setCamera(OrthographicCamera camera) {
 		this.camera = camera;
 	}
@@ -252,9 +252,20 @@ public class Manager implements ContactListener {
 		this.cameraController = controller;
 	}
 
+	private void createCameras() {
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.set(0, 0, 0);
+		camera.zoom = 1f / (float)Manager.PTM;
+		
+		noZoomCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		noZoomCamera.position.set(0,0, 0);
+		noZoomCamera.zoom = 1f;
+	}
+	
 	public void updateCameraPosition() {
 		if (camera == null || cameraController == null || cameraController.getBody() == null) {
 			camera.update();
+			noZoomCamera.update();
 			return;
 		}
 
@@ -270,6 +281,9 @@ public class Manager implements ContactListener {
 		}	
 
 		camera.translate(translateV.x, translateV.y, 0f);
+		translateV = translateV.mul(PTM);
+		noZoomCamera.translate(translateV.x, translateV.y, 0f);
+		
 		translateV.set(0f, 0f);
 
 		Ray negBorder = camera.getPickRay(0, Gdx.graphics.getHeight());
@@ -280,7 +294,28 @@ public class Manager implements ContactListener {
 			translateV.y = -(CAMERA_EDGE - Math.abs(negBorder.origin.y - cameraController.getBody().getPosition().y));
 		} 
 		camera.translate(translateV.x, translateV.y, 0f);
+		translateV = translateV.mul(PTM);
+		noZoomCamera.translate(translateV.x, translateV.y, 0f);
+		
 		camera.update();
+		noZoomCamera.update();
+	}
+	
+	public void switchCamera(boolean zoomed) {
+		if (zoomed) {
+			batch.setProjectionMatrix(camera.combined);
+		} else {
+			batch.setProjectionMatrix(noZoomCamera.combined);
+		}
+	}
+	
+	public OrthographicCamera getCamera(boolean zoomed) {
+		
+		if (zoomed) {
+			return camera;
+		} else {
+			return noZoomCamera;
+		}
 	}
 
 	public TextureAtlas getTextureAtlas(String name) {

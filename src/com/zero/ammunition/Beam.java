@@ -73,4 +73,9 @@ public class Beam extends Ammunition {
 		light.setMaskBits(body.getFixtureList().get(0).getFilterData().maskBits);
 		light.setDirection((float)Math.toDegrees( body.getAngle()) - 90 );
 	}
+
+	@Override
+	public float getAmmunitionDamage() {
+		return 25f;
+	}
 }

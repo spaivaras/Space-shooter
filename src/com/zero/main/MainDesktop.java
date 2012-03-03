@@ -15,7 +15,7 @@ public class MainDesktop {
 //            settings.maxWidth = 2116;
 //            settings.maxHeight = 2116;
 //            settings.incremental = false;
-//            TexturePacker.process(settings, "res", "res-packed");
+//            TexturePacker.process(settings, "res/textures/packable", "res/atlases");
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.vSyncEnabled = false;

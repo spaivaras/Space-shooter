@@ -2,16 +2,16 @@ hit
 - Delay -
 active: false
 - Duration - 
-lowMin: 100.0
-lowMax: 100.0
+lowMin: 150.0
+lowMax: 150.0
 - Count - 
 min: 0
 max: 15
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 50.0
-highMax: 50.0
+highMin: 100.0
+highMax: 100.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -20,15 +20,15 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 1000.0
-highMax: 1000.0
-relative: false
+highMin: 800.0
+highMax: 800.0
+relative: true
 scalingCount: 2
 scaling0: 1.0
-scaling1: 0.0
+scaling1: 0.39215687
 timelineCount: 2
 timeline0: 0.0
-timeline1: 0.68251276
+timeline1: 0.96575344
 - Life Offset - 
 active: false
 - X Offset - 
@@ -64,7 +64,7 @@ highMin: 32.0
 highMax: 32.0
 relative: false
 scalingCount: 2
-scaling0: 1.0
+scaling0: 0.4509804
 scaling1: 0.0
 timelineCount: 2
 timeline0: 0.0
@@ -81,7 +81,7 @@ scaling0: 1.0
 scaling1: 0.0
 timelineCount: 2
 timeline0: 0.0
-timeline1: 0.7300509
+timeline1: 0.5273973
 - Angle - 
 active: true
 lowMin: 0.0
@@ -112,9 +112,9 @@ active: false
 active: false
 - Tint - 
 colorsCount: 3
-colors0: 1.0
-colors1: 0.11372549
-colors2: 0.11372549
+colors0: 0.5019608
+colors1: 0.49803922
+colors2: 0.40392157
 timelineCount: 1
 timeline0: 0.0
 - Transparency - 
@@ -140,4 +140,4 @@ aligned: false
 additive: true
 behind: false
 - Image Path -
-C:\Work\projects\game\res\textures\blob.png
+C:\Work\projects\game\res\textures\packable\blob.png

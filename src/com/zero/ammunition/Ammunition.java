@@ -42,6 +42,7 @@ public abstract class Ammunition implements WorldObject {
 	protected abstract float getSpeed();
 	protected abstract float getLifeTime();
 	protected abstract void createLight();
+	protected abstract float getAmmunitionDamage();
 	
 	protected Vector2 getThrustVector() {
 		double rads = body.getAngle() + Math.toRadians(90);
@@ -97,7 +98,6 @@ public abstract class Ammunition implements WorldObject {
 					(float)this.sprite.getHeight() / 2);
 			
 			sprite.setPosition(screen.x, screen.y);
-			sprite.setScale(1f / (float)Manager.PTM);
 			sprite.draw(manager.getBatch());
 		}
 	}
@@ -134,5 +134,14 @@ public abstract class Ammunition implements WorldObject {
 	
 	public Body getBody() {
 		return body;
+	}
+	
+	public float getDamage() {
+		float damage = getAmmunitionDamage();
+		if (gun != null) {
+			damage *= gun.getDamageModifier();
+		}
+		
+		return damage;
 	}
 }

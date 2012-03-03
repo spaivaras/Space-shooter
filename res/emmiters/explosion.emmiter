@@ -1,31 +1,29 @@
 Explosion
 - Delay -
-active: true
-lowMin: 0.0
-lowMax: 0.0
+active: false
 - Duration - 
 lowMin: 1000.0
 lowMax: 1000.0
 - Count - 
-min: 11
-max: 150
+min: 1
+max: 80
 - Emission - 
 lowMin: 20.0
 lowMax: 20.0
-highMin: 1000.0
-highMax: 1000.0
+highMin: 100.0
+highMax: 100.0
 relative: false
 scalingCount: 2
 scaling0: 1.0
-scaling1: 0.7058824
+scaling1: 0.0
 timelineCount: 2
 timeline0: 0.0
-timeline1: 0.98630136
+timeline1: 0.9520548
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 1000.0
-highMax: 1000.0
+highMin: 1500.0
+highMax: 1500.0
 relative: false
 scalingCount: 2
 scaling0: 1.0
@@ -67,14 +65,12 @@ lowMax: 30.0
 highMin: 180.0
 highMax: 180.0
 relative: false
-scalingCount: 3
-scaling0: 0.0
-scaling1: 1.0
-scaling2: 0.0
-timelineCount: 3
+scalingCount: 2
+scaling0: 0.96629214
+scaling1: 0.48876405
+timelineCount: 2
 timeline0: 0.0
-timeline1: 0.10958904
-timeline2: 0.739726
+timeline1: 1.0
 - Velocity - 
 active: true
 lowMin: 0.0
@@ -84,10 +80,10 @@ highMax: 80.0
 relative: false
 scalingCount: 2
 scaling0: 1.0
-scaling1: 1.0
+scaling1: 0.13725491
 timelineCount: 2
 timeline0: 0.0
-timeline1: 0.5733042
+timeline1: 0.9931507
 - Angle - 
 active: true
 lowMin: 0.0
@@ -108,7 +104,7 @@ active: false
 - Tint - 
 colorsCount: 3
 colors0: 1.0
-colors1: 0.45490196
+colors1: 0.4392157
 colors2: 0.36078432
 timelineCount: 1
 timeline0: 0.0
@@ -130,9 +126,9 @@ timeline2: 0.8
 timeline3: 1.0
 - Options - 
 attached: false
-continuous: true
+continuous: false
 aligned: false
 additive: true
 behind: false
 - Image Path -
-C:\Work\projects\game\res\textures\fire2.png
+C:\Work\projects\game\res\textures\packable\fire.png

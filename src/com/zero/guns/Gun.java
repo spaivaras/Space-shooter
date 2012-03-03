@@ -21,7 +21,7 @@ public abstract class Gun implements Disposable {
 	}
 	
 	public abstract float getEnergyUse();
-	public abstract float getDamage();
+	public abstract float getDamageModifier();
 	public abstract Vector2 getNozzlePosition(float bulletHeight);
 	public abstract float getNozzleAngle();
 	public abstract void loadSound();

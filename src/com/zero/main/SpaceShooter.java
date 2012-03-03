@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -27,13 +26,12 @@ public class SpaceShooter implements ApplicationListener {
 	public final static float TIME_STEP = 1f / MAX_FPS;
 	private final static float MAX_STEPS = 1f + MAX_FPS / MIN_FPS;
 	private final static float MAX_TIME_PER_FRAME = TIME_STEP * MAX_STEPS;
-	private final static int VELOCITY_ITERS = 1;
-	private final static int POSITION_ITERS = 1;
+	private final static int VELOCITY_ITERS = 4;
+	private final static int POSITION_ITERS = 4;
 
 	float physicsTimeLeft;
 
 	private SpriteBatch spriteBatch;
-	private OrthographicCamera camera;
 	private World world;
 	private Box2DDebugRenderer renderer;
 	private Manager manager;
@@ -45,11 +43,6 @@ public class SpaceShooter implements ApplicationListener {
 
 	@Override
 	public void create() {
-		this.createCamera();
-
-		TextureAtlas atlas;
-		atlas = new TextureAtlas(Gdx.files.internal("res-packed/pack"));
-
 		world = new World(new Vector2(0, 0), true);
 		renderer = new Box2DDebugRenderer(true, true, true, true);
 		spriteBatch = renderer.batch;
@@ -60,8 +53,6 @@ public class SpaceShooter implements ApplicationListener {
 		manager.setWorld(world);
 		manager.setBatch(spriteBatch);
 		manager.setLightEngine(lightEngine);
-		manager.setCamera(camera);
-		manager.setTextureAtlas(atlas, "main");
 
 		world.setContactListener(manager);
 		
@@ -74,12 +65,6 @@ public class SpaceShooter implements ApplicationListener {
 		font.setColor(Color.WHITE);
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-	}
-
-	private void createCamera() {
-		camera = new OrthographicCamera(800, 600);
-		camera.position.set(0, 0, 0);
-		camera.zoom = 1f / (float)Manager.PTM;
 	}
 
 	private void createLights() {
@@ -101,9 +86,7 @@ public class SpaceShooter implements ApplicationListener {
 		//Some strange way to limit fps
 		Display.sync(200);
 		manager.updateCameraPosition();
-
-		spriteBatch.setProjectionMatrix(camera.combined);
-
+		
 		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
 		
 		float delta  = Gdx.graphics.getDeltaTime();
@@ -113,18 +96,25 @@ public class SpaceShooter implements ApplicationListener {
 		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		//renderer.render(world, camera.combined);
-
+		
+		//renderer.render(world, manager.getCamera(true).combined);
+		
+		manager.switchCamera(false);
 		spriteBatch.begin();
-		manager.render();
+			manager.render();
 		spriteBatch.end();
 
+		
 		this.renderLights(stepped);
-
+		manager.switchCamera(false);
+		spriteBatch.begin();
+			manager.renderEmmiters();
+		spriteBatch.end();
+		
+		
 		spriteBatch.setProjectionMatrix(normalProjection);
 		spriteBatch.begin();
 
-		manager.renderExplosion();
 		
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, "FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond())
@@ -149,6 +139,8 @@ public class SpaceShooter implements ApplicationListener {
 			lightEngine.update();
 		}
 
+		OrthographicCamera camera = manager.getCamera(true);
+		
 		lightEngine.setCombinedMatrix(camera.combined, camera.position.x,
 				camera.position.y, camera.viewportWidth * camera.zoom,
 				camera.viewportHeight * camera.zoom);

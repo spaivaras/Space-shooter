@@ -1,0 +1,54 @@
+
+packable1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+spaceships
+  rotate: false
+  xy: 2, 2
+  size: 376, 600
+  orig: 376, 600
+  offset: 0, 0
+  index: -1
+asteroid-big
+  rotate: false
+  xy: 2, 604
+  size: 391, 440
+  orig: 391, 440
+  offset: 0, 0
+  index: -1
+fire
+  rotate: false
+  xy: 2, 1046
+  size: 352, 351
+  orig: 352, 351
+  offset: 0, 0
+  index: -1
+plane
+  rotate: false
+  xy: 380, 2
+  size: 122, 121
+  orig: 122, 121
+  offset: 0, 0
+  index: -1
+hero
+  rotate: false
+  xy: 380, 125
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+laser
+  rotate: false
+  xy: 446, 125
+  size: 11, 50
+  orig: 11, 50
+  offset: 0, 0
+  index: -1
+blob
+  rotate: false
+  xy: 459, 125
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
