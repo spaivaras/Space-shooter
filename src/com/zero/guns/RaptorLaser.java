@@ -46,7 +46,7 @@ public class RaptorLaser extends Gun {
 
 	@Override
 	public void loadSound() {
-		shotSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/laser.ogg"));
+		shotSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/laser.ogg"));
 	}
 
 	@Override

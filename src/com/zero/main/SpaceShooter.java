@@ -124,6 +124,8 @@ public class SpaceShooter implements ApplicationListener {
 		spriteBatch.setProjectionMatrix(normalProjection);
 		spriteBatch.begin();
 
+		manager.renderExplosion();
+		
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, "FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond())
 				+ " - GLes 2.0: " + Gdx.graphics.isGL20Available()

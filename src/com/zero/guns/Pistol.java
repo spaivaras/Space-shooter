@@ -46,7 +46,7 @@ public class Pistol extends Gun {
 
 	@Override
 	public void loadSound() {
-		shotSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/round.ogg"));
+		shotSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/round.ogg"));
 	}
 
 	@Override

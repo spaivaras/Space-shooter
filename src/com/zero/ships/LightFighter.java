@@ -79,8 +79,8 @@ public class LightFighter extends Ship {
 	}
 	
 	protected void loadSounds() {
-		thrusterSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/thrust.ogg"));
-		boostSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/turbo.ogg"));
+		thrusterSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/thrust.ogg"));
+		boostSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/turbo.ogg"));
 	}
 	
 	@Override

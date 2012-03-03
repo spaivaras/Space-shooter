@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -44,6 +45,8 @@ public class Manager implements ContactListener {
 	protected WorldObject cameraController;
 
 	protected TextureAtlas mainAtlas;
+	
+	protected ParticleEffect editor;
 
 	protected Map _map;
 	private Texture texture;       
@@ -51,6 +54,10 @@ public class Manager implements ContactListener {
 
 	private Manager() {
 		loadSounds();
+		editor = new ParticleEffect();
+		editor.load(Gdx.files.internal("res/emmiters/explosion.emmiter"), Gdx.files.internal("res/textures"));
+		editor.setPosition(512, 384);
+		editor.start();
 	}
 
 	public void setMap(Map map) {
@@ -86,6 +93,10 @@ public class Manager implements ContactListener {
 		}
 	}
 
+	public void renderExplosion() {
+		editor.draw(this.batch);
+	}
+	
 	public void update(float delta) {
 
 		Iterator<WorldObject> itr = needsToBeRemoved.iterator(); 
@@ -109,6 +120,7 @@ public class Manager implements ContactListener {
 		for (WorldObject entity : entities) {
 			entity.update(delta);
 		}
+		editor.update(delta);
 	}
 
 	public Sound playSound(String key, float pitch, float gain, boolean loop) {
@@ -170,15 +182,8 @@ public class Manager implements ContactListener {
 
 	private void loadSounds() {
 		sounds = new HashMap<String, Sound>();
-
-		Sound thruster = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/thrust.ogg"));
-		sounds.put("thruster", thruster); 
-
-		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/hit.ogg"));
+		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/hit.ogg"));
 		sounds.put("hit", hit);
-
-		Sound turbo = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/turbo.ogg"));
-		sounds.put("turbo", turbo);
 	}
 
 	@Override
