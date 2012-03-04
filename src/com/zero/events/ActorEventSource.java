@@ -59,6 +59,7 @@ public class ActorEventSource
 	 */
 	public void update()
 	{
+		//System.out.println("Update actor event");
 		try
 		{
 			if (events.size() > 0)
