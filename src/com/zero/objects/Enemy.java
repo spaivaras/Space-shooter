@@ -6,6 +6,7 @@ import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
 import com.zero.ships.LightFighter;
 import com.zero.ships.Ship;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 public class Enemy implements ShipController {
 	private Ship ship = null;
@@ -13,7 +14,7 @@ public class Enemy implements ShipController {
 	
 	public Enemy() {
 		ship = new LightFighter(this, 10, 0);
-		Manager.getInstance().addEntityNext(ship);
+		ManagerActor.getInstance().addEntityNext(ship);
 	}
 	
 	public void update(float delta) {

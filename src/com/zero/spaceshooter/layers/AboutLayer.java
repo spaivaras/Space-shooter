@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.tablelayout.Table;
 import com.badlogic.gdx.utils.Scaling;
 import com.zero.spaceshooter.MainDirector;
-import com.zero.spaceshooter.actors.SpriteActors;
 import com.zero.spaceshooter.definitions.GameActorEvents;
 import com.zero.spaceshooter.definitions.GameActorTextures;
 import com.zero.spaceshooter.resources.TextureCache;
@@ -96,9 +95,6 @@ public class AboutLayer extends Layer
 		table.pack();
 		
 		addActor(table);
-		SpriteActors tst  = new SpriteActors();
-		addActor(tst);
-		
 	}
 	
 

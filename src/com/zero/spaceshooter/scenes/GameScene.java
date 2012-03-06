@@ -12,14 +12,14 @@ public class GameScene extends Scene {
 
 	public GameScene()
 	{
-
+		
 		controlLayer = new ControlLayer();
 		
 		getInputMultiplexer().addProcessor(controlLayer);
 		
 		addLayer(controlLayer);
 		
-		GameLayer game = new GameLayer();
+		GameLayer game = new GameLayer(this.getSpriteBatch());
 		addLayer(game);
 		
 		// ---------------------------------------------------------------

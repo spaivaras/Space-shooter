@@ -9,12 +9,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.guns.Gun;
 import com.zero.interfaces.WorldObject;
 import com.zero.main.Manager;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 public abstract class Ammunition implements WorldObject {
 	
 	public static short COLLISION_BITS = 0x0008; 
 	
-	protected Manager manager;
+	protected ManagerActor manager;
 	protected Sprite sprite;
 	protected float spriteX;
 	protected float spriteY;
@@ -27,7 +28,7 @@ public abstract class Ammunition implements WorldObject {
 	
 	
 	public Ammunition() {
-		this.manager = Manager.getInstance();
+		this.manager = ManagerActor.getInstance();
 		this.createSprite();
 	}
 	

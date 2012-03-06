@@ -5,6 +5,7 @@ import box2dLight.Light;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.ammunition.Ammunition;
@@ -12,7 +13,9 @@ import com.zero.guns.Gun;
 import com.zero.interfaces.EnergyHolder;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
-import com.zero.main.Manager;
+import com.zero.spaceshooter.actors.ManagerActor;
+
+
 
 public abstract class Ship implements WorldObject, EnergyHolder {
 
@@ -21,7 +24,7 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 
 	protected float energyLevel = 0;
 	protected Sprite sprite = null;
-	protected Manager manager = null;
+	protected ManagerActor manager = null;
 	protected Body body = null;
 	protected float homeX = 0f, homeY = 0f;
 	protected Light mainLight = null;
@@ -72,7 +75,7 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 	protected abstract void stopBoostSound();
 	
 	public Ship() {
-		manager = Manager.getInstance();
+		manager = ManagerActor.getInstance();
 		this.loadSounds();
 	}
 	
@@ -108,6 +111,10 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 		return energyLevel;
 	}
 	
+	
+	public void draw(SpriteBatch batch, float alphaParent) {
+		this.draw();
+	}
 	@Override
 	public void draw() {
 		Sprite drawSprite;
@@ -131,7 +138,7 @@ public abstract class Ship implements WorldObject, EnergyHolder {
 		drawSprite.setPosition(screen.x, screen.y);
 		drawSprite.setRotation((float)Math.toDegrees(body.getAngle()) + 180);
 
-		drawSprite.setScale(1f / (float)Manager.PTM );
+		drawSprite.setScale(1f / (float)ManagerActor.PTM );
 		drawSprite.draw(manager.getBatch());
 	}
 

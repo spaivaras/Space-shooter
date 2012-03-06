@@ -5,6 +5,7 @@ import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Disposable;
 import com.zero.events.ActorEventObserver;
@@ -38,6 +39,8 @@ public class MainDirector implements Disposable
 
 	private SpriteBatch spriteBatch;
 	protected float delta;
+	
+	protected TextureAtlas atlas;
 
 	/**
 	 * Access singleton instance

@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
-import com.zero.main.Manager;
 import com.zero.ships.LightFighter;
 import com.zero.ships.Ship;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 public class Player implements ShipController {
 	private Ship ship = null;
@@ -15,7 +15,7 @@ public class Player implements ShipController {
 	
 	public Player() {
 		ship = new LightFighter(this, 0, 0);
-		Manager.getInstance().addEntityNext(ship);
+		ManagerActor.getInstance().addEntityNext(ship);
 	}
 	
 	public void update(float delta) {
