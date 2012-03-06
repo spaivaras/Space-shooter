@@ -419,4 +419,9 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	public void followTarget(boolean follow) {
 		shouldFollowTarget = follow;
 	}
+	
+	public Vector2 getPosition() {
+		
+		return new Vector2(homeX, homeY);
+	}
 }

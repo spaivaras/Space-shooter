@@ -35,8 +35,10 @@ public class FpsLayer extends Layer {
 		this.height = height;
 
 		buildElements();
+		/*
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
+				*/
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class FpsLayer extends Layer {
 	public void draw(SpriteBatch batch, float parentAlpha)
 	{
 		super.draw(batch, parentAlpha);
-		batch.setProjectionMatrix(normalProjection);
+		//batch.setProjectionMatrix(normalProjection);
 
 		// FPS
 		textStringBuilder.setLength(0);

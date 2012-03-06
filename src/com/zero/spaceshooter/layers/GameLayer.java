@@ -51,6 +51,10 @@ public class GameLayer extends Layer implements ActorEventObserver {
 		initManagerActor();
 	}
 
+	public void exit() {
+		manager.exit();
+	}
+	
 	public void enter() {
 		batch = this.getStage().getSpriteBatch();
 		this.running = true;
@@ -75,7 +79,6 @@ public class GameLayer extends Layer implements ActorEventObserver {
 
 		this.createLights();	
 		manager = ManagerActor.getInstance();
-
 		manager.setWorld(world);
 		manager.setBatch(batch);
 		manager.setLightEngine(lightEngine);
@@ -85,7 +88,7 @@ public class GameLayer extends Layer implements ActorEventObserver {
 		player = new Player();
 		manager.clampCameraTo(player.getShip());
 		
-		 enemy = new Enemy();		
+		enemy = new Enemy();		
 	
 		font = new BitmapFont();
 		font.setColor(Color.RED);
@@ -166,5 +169,10 @@ public class GameLayer extends Layer implements ActorEventObserver {
 	public boolean handleEvent(ActorEvent event) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public Player getPlayer() {
+		return this.player;
+		
 	}
 }

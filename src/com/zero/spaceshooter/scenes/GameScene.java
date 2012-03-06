@@ -3,6 +3,7 @@ package com.zero.spaceshooter.scenes;
 import com.zero.spaceshooter.layers.ControlLayer;
 import com.zero.spaceshooter.layers.FpsLayer;
 import com.zero.spaceshooter.layers.GameLayer;
+import com.zero.spaceshooter.layers.game.MapInfo;
 
 public class GameScene extends Scene {
 
@@ -20,8 +21,11 @@ public class GameScene extends Scene {
 		addLayer(controlLayer);
 		
 		GameLayer game = new GameLayer(this.getSpriteBatch());
-		addLayer(game);
 		
+		MapInfo map = new MapInfo(game.getPlayer(), this.width, this.height);
+		
+		addLayer(game);
+		addLayer(map);
 		// ---------------------------------------------------------------
 		// FPS layer.
 		// ---------------------------------------------------------------

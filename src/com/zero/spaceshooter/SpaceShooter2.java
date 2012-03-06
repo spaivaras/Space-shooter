@@ -109,8 +109,9 @@ public class SpaceShooter2 extends InputAdapter implements ApplicationListener, 
 	
 	
 	protected void transitionTo(Scene newscene) {
-		
+		this.director.getScene().exit();
 		this.director.getScene().dispose();
+		
 
 		//TransitionScene transitionScene = MoveInRTransitionScene.$(inScene, outScene, DURATION_ABOUT_TRANSITION, Bounce.OUT);
 

@@ -68,7 +68,11 @@ public class ManagerActor extends Actor implements ContactListener {
 		regions[3] = new TextureRegion(texture, 32, 32, 32, 32);    // #6
 		this._map = map;
 	}
-
+	
+	public ArrayList<WorldObject> test() {
+		return this.entities;
+	}
+	
 	public Map getMap() {
 		return this._map;
 	}
@@ -335,6 +339,10 @@ public class ManagerActor extends Actor implements ContactListener {
 	public Actor hit(float x, float y) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void exit() {
+		manager = null;
 	}
 }
 
