@@ -4,8 +4,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.zero.ammunition.Ammunition;
-import com.zero.main.Manager;
 import com.zero.ships.Ship;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 
 public abstract class Gun implements Disposable {
@@ -44,7 +44,7 @@ public abstract class Gun implements Disposable {
 		try {
 			Ammunition bullet = bulletClass.newInstance();
 			bullet.setGun(this);
-			Manager.getInstance().addEntityNext(bullet);
+			ManagerActor.getInstance().addEntityNext(bullet);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

@@ -9,6 +9,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zero.objects.Enemy;
 import com.zero.objects.Player;
+import com.zero.shaders.MapShader;
 
 public class SpaceShooter implements ApplicationListener {
 
@@ -40,11 +42,16 @@ public class SpaceShooter implements ApplicationListener {
 	private Enemy enemy;
 	private BitmapFont font;
 	private Matrix4 normalProjection = new Matrix4();
+	private MapShader map;
 
 	@Override
 	public void create() {
+		map = new MapShader();
+		map.create();
+		
 		world = new World(new Vector2(0, 0), true);
 		renderer = new Box2DDebugRenderer(true, true, true, true);
+		
 		spriteBatch = renderer.batch;
 
 		this.createLights();	
@@ -65,6 +72,7 @@ public class SpaceShooter implements ApplicationListener {
 		font.setColor(Color.WHITE);
 		normalProjection.setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
+		
 	}
 
 	private void createLights() {
@@ -85,11 +93,15 @@ public class SpaceShooter implements ApplicationListener {
 	public void render() {
 		//Some strange way to limit fps
 		Display.sync(200);
-		manager.updateCameraPosition();
 		
 		boolean stepped = fixedStep(Gdx.graphics.getDeltaTime());
 		
 		float delta  = Gdx.graphics.getDeltaTime();
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		manager.updateCameraPosition();
+		
+		map.render(0.005f);
+		
 		player.update(delta);
 		enemy.update(delta);
 		manager.update(delta);
@@ -97,9 +109,10 @@ public class SpaceShooter implements ApplicationListener {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
 		
-		//renderer.render(world, manager.getCamera(true).combined);
+		renderer.render(world, manager.getCamera(true).combined);
 		
 		manager.switchCamera(false);
+
 		spriteBatch.begin();
 			manager.render();
 		spriteBatch.end();
@@ -112,26 +125,8 @@ public class SpaceShooter implements ApplicationListener {
 		spriteBatch.end();
 		
 		
-		spriteBatch.setProjectionMatrix(normalProjection);
-		spriteBatch.begin();
-
 		
-		font.setColor(Color.WHITE);
-		font.draw(spriteBatch, "FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond())
-				+ " - GLes 2.0: " + Gdx.graphics.isGL20Available()
-				+ " - Heap size: "
-				+ Math.round(Gdx.app.getJavaHeap() / 1024 / 1024) + " M"
-				+ " - Native heap size: "
-				+ Math.round(Gdx.app.getNativeHeap() / 1024 / 1024) + " M", 10, 20);
 		
-		if (player.getShip().getEnergyLevel() < 30) {
-			font.setColor(Color.RED);
-		} else {
-			font.setColor(Color.BLUE);
-		}
-		
-		font.draw(spriteBatch, "Energy level: " + player.getShip().getEnergyLevel(), 10, Gdx.graphics.getHeight() - 20f);
-		spriteBatch.end();
 	}
 
 	private void renderLights(Boolean worldSteped) {

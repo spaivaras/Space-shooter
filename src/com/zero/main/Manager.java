@@ -25,7 +25,6 @@ import com.zero.interfaces.EmmiterController;
 import com.zero.interfaces.WorldObject;
 
 
-
 public class Manager implements ContactListener {
 
 	//Pixel to meter ratio
