@@ -70,10 +70,10 @@ public class GameLayer extends Layer implements ActorEventObserver {
 		RayHandler.setGammaCorrection(true);
 
 		lightEngine = new RayHandler(world);
-		lightEngine.setAmbientLight(0.3f);
-		lightEngine.setCulling(true);
+		lightEngine.setAmbientLight(0.6f);
+		lightEngine.setCulling(false);
 		lightEngine.setBlur(true);
-		lightEngine.setBlurNum(10);
+		lightEngine.setBlurNum(3);
 	}
 	
 	protected void initManagerActor() {
