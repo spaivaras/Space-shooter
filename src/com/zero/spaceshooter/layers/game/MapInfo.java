@@ -85,6 +85,14 @@ public class MapInfo extends Layer {
 
 		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 50);
 		
+		textStringBuilder.setLength(0);
+		textStringBuilder.append("Player speed:");
+		textStringBuilder.append(Math.round(player.getShip().getSpeed()));
+		textStringBuilder.append("m/s");
+		textStringBuilder.getChars(0, textStringBuilder.length(), chars, 0);
+
+		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 70);
+		
 	}
 	
 }

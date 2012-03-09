@@ -51,6 +51,10 @@ public class GameLayer extends Layer implements ActorEventObserver {
 		initManagerActor();
 	}
 
+	public ManagerActor getManagerActor() {
+		return this.manager;
+	}
+	
 	public void exit() {
 		manager.exit();
 	}
@@ -102,6 +106,9 @@ public class GameLayer extends Layer implements ActorEventObserver {
 	public void act(float delta) {
 		worldSteped = fixedStep(delta);
 		manager.updateCameraPosition();
+		if(worldSteped) {
+			player.getShip().updateSpeed();
+		}
 		player.update(delta);
 		enemy.update(delta);
 		manager.update(delta);

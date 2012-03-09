@@ -339,5 +339,12 @@ public class MainDirector implements Disposable
 	{
 		spriteBatch.dispose();
 	}
+	
+	public TextureAtlas getAtlas() {
+		if(this.atlas == null) {
+			this.atlas =  new TextureAtlas(Gdx.files.internal("res/atlases/pack"));
+		}
+		return this.atlas;
+	}
 
 }

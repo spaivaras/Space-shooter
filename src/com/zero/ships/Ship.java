@@ -1,5 +1,7 @@
 package com.zero.ships;
 
+import java.sql.Time;
+
 import box2dLight.Light;
 
 import com.badlogic.gdx.Gdx;
@@ -53,7 +55,11 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	protected long thrusterSoundId = -1;
 	protected long revThrusterSoundId = -1;
 	protected long boostSoundId = -1;
-
+	
+	protected Vector2 oldpos;
+	protected float speed = 0f;
+	protected long oldtime;
+	
 	protected Gun mainGun = null;
 
 	protected WorldObject target = null;
@@ -106,6 +112,27 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 		return body;
 	}
 
+	public void updateSpeed() {
+		if(this.getBody() != null) {
+			if(oldpos == null) {
+				oldpos = this.getBody().getWorldCenter().cpy();
+			}
+			long newtime = System.currentTimeMillis();
+			if((newtime - oldtime) < 100d) {
+				return;
+			}
+			float dest = Math.abs(this.getBody().getWorldCenter().dst(oldpos)) * 10;
+			
+			//speed = (dest * 3600) / 1000; to km/h
+			speed = dest;
+			oldtime = System.currentTimeMillis();
+			oldpos = this.getBody().getWorldCenter().cpy();
+		}
+	}
+	public float getSpeed() {
+		return this.speed;
+	}
+	
 	public Vector2 getSize() {
 		Sprite customSprite;
 		if (sprite != null) {

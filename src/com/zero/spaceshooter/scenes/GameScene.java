@@ -1,8 +1,10 @@
 package com.zero.spaceshooter.scenes;
 
+import com.zero.spaceshooter.actors.ManagerActor;
 import com.zero.spaceshooter.layers.ControlLayer;
 import com.zero.spaceshooter.layers.FpsLayer;
 import com.zero.spaceshooter.layers.GameLayer;
+import com.zero.spaceshooter.layers.game.Map;
 import com.zero.spaceshooter.layers.game.MapInfo;
 
 public class GameScene extends Scene {
@@ -21,11 +23,15 @@ public class GameScene extends Scene {
 		addLayer(controlLayer);
 		
 		GameLayer game = new GameLayer(this.getSpriteBatch());
+		ManagerActor manager = game.getManagerActor();
+		long seed = 111;
+		Map map = new Map(this.width, this.height, manager, game.getPlayer(), seed);
+		MapInfo mapinfo = new MapInfo(game.getPlayer(), this.width, this.height);
 		
-		MapInfo map = new MapInfo(game.getPlayer(), this.width, this.height);
 		
-		addLayer(game);
 		addLayer(map);
+		addLayer(game);
+		addLayer(mapinfo);
 		// ---------------------------------------------------------------
 		// FPS layer.
 		// ---------------------------------------------------------------
