@@ -3,10 +3,12 @@ package com.zero.spaceshooter.layers.game;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.zero.main.Manager;
 import com.zero.spaceshooter.actors.ManagerActor;
 import com.zero.spaceshooter.layers.Layer;
@@ -58,7 +60,7 @@ public class StarField extends Layer {
 		starTexture = new Texture(p);
 		
 		//Get initial position of main camera (used to determine how much camera was moved)
-		Vector2 tempPosition = new Vector2(manager.translateCoordsToScreen(new Vector2(manager.getCamera(false).position.x, manager.getCamera(false).position.y)));
+		Vector2 tempPosition = getCameraPosition();
 		tempPosition.mul(1f / Manager.PTM);
 		Reset(tempPosition);
 	}
@@ -67,7 +69,7 @@ public class StarField extends Layer {
 	{
 		//Calculate camera movement
 		lastPosition.set(position);
-		position.set(manager.translateCoordsToScreen(new Vector2(manager.getCamera(false).position.x, manager.getCamera(false).position.y)));
+		position.set(getCameraPosition());
 		position.mul(1f / Manager.PTM);
 		
 		Vector2 movement = new Vector2(position);
@@ -127,4 +129,10 @@ public class StarField extends Layer {
         this.position.set(position);
     }
 	
+	private Vector2 getCameraPosition() {
+		OrthographicCamera camera = manager.getCamera(false);
+		Vector3 cameraPosition = camera.position;
+		
+		return manager.translateCoordsToScreen(new Vector2(cameraPosition.x, cameraPosition.y));
+	}
 }
