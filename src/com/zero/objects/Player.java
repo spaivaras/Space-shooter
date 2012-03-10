@@ -2,6 +2,7 @@ package com.zero.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.Vector2;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
 import com.zero.ships.LightFighter;
@@ -74,6 +75,12 @@ public class Player implements ShipController {
 	@Override
 	public void shipWasHit(WorldObject who) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void shipWasDestroyed(Vector2 position) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

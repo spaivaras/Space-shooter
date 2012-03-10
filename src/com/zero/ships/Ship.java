@@ -110,25 +110,8 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 		return body;
 	}
 
-	public void updateSpeed() {
-		if(this.getBody() != null) {
-			if(oldpos == null) {
-				oldpos = this.getBody().getWorldCenter().cpy();
-			}
-			long newtime = System.currentTimeMillis();
-			if((newtime - oldtime) < 100d) {
-				return;
-			}
-			float dest = Math.abs(this.getBody().getWorldCenter().dst(oldpos)) * 10;
-			
-			//speed = (dest * 3600) / 1000; to km/h
-			speed = dest;
-			oldtime = System.currentTimeMillis();
-			oldpos = this.getBody().getWorldCenter().cpy();
-		}
-	}
 	public float getSpeed() {
-		return this.speed;
+		return this.getBody().getLinearVelocity().len();
 	}
 	
 	public Vector2 getSize() {
@@ -353,6 +336,14 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 			}
 		}
 	}
+	
+	public float getDistanceToTarget() {
+		if (body != null && target != null) {
+			return body.getWorldCenter().dst(target.getBody().getWorldCenter());
+		}
+		
+		return 0f;
+	}
 
 	@Override
 	public boolean dispose() {
@@ -395,8 +386,6 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 		
 		float damage = bullet.getDamage();
 		lifeLevel -= damage;
-		System.out.println("Life left: " + lifeLevel);
-
 		
 		if (lifeLevel <= 0) {
 			die();
@@ -409,6 +398,7 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 		explosionEffect.start();
 		manager.removeEntityNex(this);
 		playDeathSound();
+		controller.shipWasDestroyed(body.getPosition());
 	}
 
 	public void goForward() {

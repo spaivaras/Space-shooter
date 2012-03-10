@@ -23,7 +23,7 @@ public class RepeaterLaser extends Gun {
 	
 	@Override
 	public float getDamageModifier() {
-		return 0.75f;
+		return 0.1f;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class RepeaterLaser extends Gun {
 	@Override
 	public float getNozzleAngle() {
 		Random rnd = new Random();
-		int modifier = Math.min(-40, 40) + rnd.nextInt(Math.abs(40 - (-40)));
+		int modifier = Math.min(-5, 5) + rnd.nextInt(Math.abs(5 - (-5)));
 		
 		return owner.getBody().getAngle() + (float)Math.toRadians(modifier);
 	}

@@ -22,6 +22,7 @@ public abstract class Ammunition implements WorldObject {
 	protected boolean shouldDraw = false;
 	protected Gun gun;
 	protected Light light;
+	protected boolean active = true;
 	
 	private float totalAliveTime = 0;
 	
@@ -80,7 +81,7 @@ public abstract class Ammunition implements WorldObject {
 			sprite.setRotation((float)Math.toDegrees(body.getAngle()));
 		}
 		
-		if (!shouldDraw) {
+		if (!shouldDraw && active) {
 			shouldDraw = true;
 		}
 		
@@ -127,6 +128,12 @@ public abstract class Ammunition implements WorldObject {
 		}
 		
 		with.firedAt(this);
+		this.shouldDraw = false;
+		this.active = false;
+		if (light != null) {
+			light.setActive(false);
+		}
+		
 		return true;
 	}
 	
@@ -143,5 +150,9 @@ public abstract class Ammunition implements WorldObject {
 		}
 		
 		return damage;
+	}
+	
+	public boolean isActive() {
+		return this.active;
 	}
 }

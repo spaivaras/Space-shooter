@@ -21,7 +21,7 @@ public class RaptorLaser extends Gun {
 
 	@Override
 	public float getDamageModifier() {
-		return 1f;
+		return 0.5f;
 	}
 
 	@Override

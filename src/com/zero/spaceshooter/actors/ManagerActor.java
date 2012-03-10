@@ -22,9 +22,9 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.zero.ammunition.Ammunition;
 import com.zero.interfaces.EmmiterController;
 import com.zero.interfaces.WorldObject;
-
 import com.zero.main.Manager;
 import com.zero.main.Map;
 
@@ -196,10 +196,18 @@ public class ManagerActor extends Actor implements ContactListener {
 
 			WorldObject caller = (WorldObject)b.getUserData();
 			WorldObject receiver = (WorldObject)a.getUserData();
-			boolean shouldRemove = caller.collision(receiver);
-
-			if (shouldRemove) {
-				needsToBeRemoved.add(caller);
+			
+			if (caller instanceof Ammunition) {
+				Ammunition tmp = (Ammunition)caller;
+				if (tmp.isActive()) {
+					caller.collision(receiver);
+				}
+				
+			} else if (receiver instanceof Ammunition) {
+				Ammunition tmp = (Ammunition)receiver;
+				if (tmp.isActive()) {
+					receiver.collision(caller);
+				}
 			}
 		}
 	}

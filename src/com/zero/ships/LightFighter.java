@@ -40,6 +40,8 @@ public class LightFighter extends Ship {
 	
 	private ArrayList<Gun> arsenal;
 	private int selectedGun = 0;
+	private boolean changeLightsState = false;
+	private Color headLightColor = DEFAULT_HEADLIGHT_COLOR;
 	
 
 	public LightFighter(ShipController controller, float x, float y) {
@@ -48,6 +50,14 @@ public class LightFighter extends Ship {
 		homeY = y;
 		this.controller = controller;
 		energyLevel = 100f;
+		
+		if (body == null && !manager.getWorld().isLocked() && isAlive) {
+			createPhysicsBody();
+			if (body != null) {
+				body.setUserData(this);
+				this.createLight();
+			}
+		}
 	}
 	
 	@Override
@@ -68,7 +78,18 @@ public class LightFighter extends Ship {
 		
 		stateTime += delta;
 		
+		if (changeLightsState) {
+			if (mainLight != null) {
+				mainLight.setActive(!mainLight.isActive());
+				changeLightsState = false;
+			}
+			if (headLight != null) {
+				headLight.setActive(!headLight.isActive());
+			}
+		}
+		
 		if (headLight != null) {
+			headLight.setColor(headLightColor);
 			headLight.setDirection((float)Math.toDegrees( body.getAngle()) - 90f);
 		}
 		
@@ -158,7 +179,7 @@ public class LightFighter extends Ship {
 
 	@Override
 	protected float getRevThrustersFactor() {
-		return 50;
+		return 90;
 	}
 
 	@Override
@@ -252,14 +273,7 @@ public class LightFighter extends Ship {
 
 	@Override
 	public void toggleLights() {
-		if (!isAlive) {return;}
-		if (mainLight != null) {
-			mainLight.setActive(!mainLight.isActive());
-		}
-		
-		if (headLight != null) {
-			headLight.setActive(!headLight.isActive());
-		}
+		changeLightsState = true;
 	}
 	
 	public void setLightColor(Color color) {
@@ -268,9 +282,7 @@ public class LightFighter extends Ship {
 			color = DEFAULT_HEADLIGHT_COLOR;
 		}
 		
-		if (headLight != null) {
-			headLight.setColor(color);
-		}
+		headLightColor = color;
 	}
 
 	@Override
