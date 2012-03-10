@@ -2,6 +2,8 @@ package com.zero.spaceshooter.layers.game;
 
 import java.util.Random;
 
+import bloom.Bloom;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -55,6 +57,7 @@ public class StarField extends Layer {
 
 	protected ShaderRenderer shaderRenderer;
 	protected ShaderProgram cloudsShader;
+	private Bloom bloom = new Bloom();
 
 	public StarField(float width, float height, ManagerActor manager) {
 		this.width = width;
@@ -73,9 +76,11 @@ public class StarField extends Layer {
 		tempPosition.mul(1f / Manager.PTM);
 		Reset(tempPosition);
 
-		
 		shaderRenderer = new ShaderRenderer("clouds_vs", "clouds_fs");
 		cloudsShader = shaderRenderer.getShaderProgram();
+		
+		bloom.setBloomIntesity(1f);
+		bloom.setTreshold(0.1f);
 	}
 
 	public void draw(SpriteBatch batch, float parentAlpha)
@@ -85,6 +90,12 @@ public class StarField extends Layer {
 		position.set(getCameraPosition());
 		position.mul(1f / Manager.PTM);
 
+		//Render last batch and set custom shaders;	
+		batch.end();
+		
+		//Start render capture to Frame buffer of bloom post processing
+		bloom.capture();
+				
 		//seperate logic for some shadered smoke screens
 		drawNebula(batch);
 		
@@ -129,11 +140,18 @@ public class StarField extends Layer {
 			batch.setColor(layerColors[depth]);
 			batch.draw(starTexture, stars[i].x, stars[i].y);
 		}
+	
+		//To finilazi capture to frame buffers end needs to be called
+		batch.end();
+		
+		//Render background with post processing bloom effect
+		bloom.render();
+		
+		//Start batch for next draws
+		batch.begin();
 	}
 
 	private void drawNebula(SpriteBatch batch) {
-		//Render last batch and set custom shaders;
-		batch.end();
 		batch.setShader(cloudsShader);
 		batch.begin();
 
@@ -148,7 +166,7 @@ public class StarField extends Layer {
 		batch.draw(cloudsTexture, 0, 0, width, height, 0, 0, cloudsTexture.getWidth(), cloudsTexture.getHeight(), false, false);
 
 		//End current batch and restore shader to default, for next renders
-		batch.end();		
+		batch.end();
 		batch.setShader(null);
 		batch.begin();
 	}
