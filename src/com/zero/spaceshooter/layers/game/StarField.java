@@ -81,6 +81,7 @@ public class StarField extends Layer {
 		
 		bloom.setBloomIntesity(1f);
 		bloom.setTreshold(0.1f);
+		bloom.setOriginalIntesity(1.0f);
 	}
 
 	public void draw(SpriteBatch batch, float parentAlpha)

@@ -13,37 +13,27 @@ Controls:
   LSHIFT - Afterburners
   
 --==----===----===----==--
-Info:
-  Latest build in build folder
-  
-  At the moment lasers behave like solid objects, not light.
-  There is no damage, and ships are impenetrable.
-  Latest build just to check physics in more than 1 model, as well as increased polygon count
-  and fast moving bodies
-  
-  To wake up other plane, shoot it!
-  
-Attention:
-  2 new weapons added
-  and 1 new type of ammunition, enjoy :)
-
+Thank you:
 --==----===----===----==--
-Objects specification:
-  Laser:
-    To propel laser in some logical matter, it has some mass as well as force tat is
-    directed to beams center of mass,
-    still laser beams will not interact like normal solid objects
+Developers and community of "Badlogic Games" for libGDX
+http://code.google.com/p/libgdx/
 
-    Mass: 5g
-    Output force: 0.1 Kg*m/s
+License:
+Code: http://www.apache.org/licenses/LICENSE-2.0
+Content: http://creativecommons.org/licenses/by-sa/3.0/
+--==----===----===----==--
+Developers and community of "Slick" for Slick 2d game engine :)
+http://slick.cokeandcode.com/
 
-  Ship:
-    Even distributed Mass: 3.254t
-    Length: 3.78m
-    Width: 3.81m
+License:
+http://slick.cokeandcode.com/static.php?page=license
+--==----===----===----==--
+kalle_h from Badlogic games forum for Bloom library
+http://www.badlogicgames.com/forum/viewtopic.php?f=17&t=3131
 
-  Ship thrusters:
-    Forward: 120 kg*m/s
-    Backward: 50 kg*m/s
-    Rotation: 90 kg*m/s
+License: N/A
+--==----===----===----==--
+kalle.hamalainen85 for Box2D Lights library
+
+License: http://www.apache.org/licenses/LICENSE-2.0
 --==----===----===----==--
