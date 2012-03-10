@@ -25,7 +25,7 @@ public class GameScene extends Scene {
 		ManagerActor manager = game.getManagerActor();
 		
 		long seed = 111;
-		Map map = new Map(this.width, this.height, manager, game.getPlayer(), seed);
+		//Map map = new Map(this.width, this.height, manager, game.getPlayer(), seed);
 		MapInfo mapinfo = new MapInfo(game.getPlayer(), this.width, this.height);
 		
 		// ---------------------------------------------------------------
@@ -37,7 +37,7 @@ public class GameScene extends Scene {
 		// ---------------------------------------------------------------
 		// Main game layers.
 		// ---------------------------------------------------------------
-		addLayer(map);
+		//addLayer(map);
 		addLayer(game);
 		addLayer(mapinfo);
 		// ---------------------------------------------------------------

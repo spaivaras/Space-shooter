@@ -3,8 +3,10 @@ package com.zero.spaceshooter.layers.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.zero.objects.Player;
 import com.zero.spaceshooter.layers.Layer;
+import com.zero.spaceshooter.utils.Chunks;
 
 public class MapInfo extends Layer {
 
@@ -26,6 +28,9 @@ public class MapInfo extends Layer {
 	static final char chars[] = new char[100];
 	static final StringBuilder textStringBuilder = new StringBuilder(100);
 	protected Player player;
+	protected Chunks chunk;
+	
+	
 	
 	/**
 	 * Create layer which displays the FPS in the bottom corner.
@@ -38,6 +43,8 @@ public class MapInfo extends Layer {
 		this.width = width;
 		this.height = height;
 		this.player = player;
+		this.chunk = Chunks.getInstance();
+		this.chunk.setPlayer(player);
 		buildElements();
 	}
 
@@ -86,12 +93,23 @@ public class MapInfo extends Layer {
 		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 50);
 		
 		textStringBuilder.setLength(0);
-		textStringBuilder.append("Player speed:");
+		textStringBuilder.append("Player speeds:");
 		textStringBuilder.append(Math.round(player.getShip().getSpeed()));
 		textStringBuilder.append("m/s");
 		textStringBuilder.getChars(0, textStringBuilder.length(), chars, 0);
 
 		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 70);
+		
+		Vector2 chunkPos = this.chunk.getChunkId();
+		textStringBuilder.setLength(0);
+		textStringBuilder.append("Chunk ID:");
+		textStringBuilder.append(chunkPos.x);
+		textStringBuilder.append("_");
+		textStringBuilder.append(chunkPos.y);
+		textStringBuilder.getChars(0, textStringBuilder.length(), chars, 0);
+
+		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 90);
+		
 		
 	}
 	
