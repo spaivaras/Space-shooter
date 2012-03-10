@@ -12,7 +12,7 @@ import com.zero.spaceshooter.scenes.MenuScene;
 import com.zero.spaceshooter.scenes.Scene;
 
 public class SpaceShooter2 extends InputAdapter implements ApplicationListener, ActorEventObserver {
-	
+
 	public static int DEFAULT_WIDTH = 1024;
 	public static int DEFAULT_HEIGHT = 768;
 	MainDirector director;
@@ -21,29 +21,23 @@ public class SpaceShooter2 extends InputAdapter implements ApplicationListener, 
 
 	@Override
 	public void create() {
-				//The Director needs the graphics context so we can't create it in the constructor.
-				this.director = MainDirector.instance();
+		//The Director needs the graphics context so we can't create it in the constructor.
+		this.director = MainDirector.instance();
 
-				// Set initial width and height.
-				this.director.setWidth(DEFAULT_WIDTH);
-				this.director.setHeight(DEFAULT_HEIGHT);
+		// Set initial width and height.
+		this.director.setWidth(DEFAULT_WIDTH);
+		this.director.setHeight(DEFAULT_HEIGHT);
 
-				// Add this as an event observer.
-				this.director.registerEventHandler(this);
+		// Add this as an event observer.
+		this.director.registerEventHandler(this);
 
-				// Load/Re-load textures
-				//TextureCache.instance().load();
+		menuScene = getMenuScene();
 
-				// Load/Re-load sounds.
-				//SoundCache.instance().load();
+		this.director.setScene(menuScene);
 
-				menuScene = getMenuScene();
-
-				this.director.setScene(menuScene);
-		
 	}
 
-	
+
 	private MenuScene getMenuScene() {
 		if (menuScene == null)
 		{
@@ -64,7 +58,7 @@ public class SpaceShooter2 extends InputAdapter implements ApplicationListener, 
 		director.update();
 	}
 
-	
+
 	@Override
 	public void pause() {}
 
@@ -106,12 +100,12 @@ public class SpaceShooter2 extends InputAdapter implements ApplicationListener, 
 
 		return handled;
 	}
-	
-	
+
+
 	protected void transitionTo(Scene newscene) {
 		this.director.getScene().exit();
 		this.director.getScene().dispose();
-		
+
 
 		//TransitionScene transitionScene = MoveInRTransitionScene.$(inScene, outScene, DURATION_ABOUT_TRANSITION, Bounce.OUT);
 

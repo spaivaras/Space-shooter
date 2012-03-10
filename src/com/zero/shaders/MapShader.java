@@ -6,32 +6,25 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public class MapShader extends ShaderRenderer {
+public class MapShader {
 	
 	protected ShaderProgram shaderProgram;
 	protected Mesh mesh;
+	protected ShaderRenderer renderer;
+	
 	float time;
 	Texture texture;
 	
-	@Override
 	public void create() {
-		this.setFragmentShaderFromFile("map_fs");
-		this.setVertexShaderFromFile("map_vs");
+		renderer = new ShaderRenderer("map_vs", "map_fs");
 		texture = new Texture(Gdx.files.internal("res/shaders/textures/shader_test.jpg"),true);
 		
-		shaderProgram = new ShaderProgram(this.getVertexFile(), this.getFragmentFile());
-		if (shaderProgram.isCompiled() == false) {
-			Gdx.app.log("ShaderError", shaderProgram.getLog());
-			System.exit(0);
-		}
-		
+		shaderProgram = renderer.getShaderProgram();
 		this.createMesh();
 	}
 
-	@Override
 	public void render(float delta) {
 		time += delta;
 
@@ -41,13 +34,10 @@ public class MapShader extends ShaderRenderer {
 		shaderProgram.setUniformf("tex0", 0);
 		shaderProgram.setUniformf("resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		shaderProgram.setUniformf("time", time);
+		
 		this.mesh.render(shaderProgram, GL20.GL_TRIANGLE_FAN);
 		shaderProgram.end();	
 		
-	}
-	
-	public ShaderProgram getShader() {
-		return this.shaderProgram;
 	}
 	
 	protected void createMesh() {

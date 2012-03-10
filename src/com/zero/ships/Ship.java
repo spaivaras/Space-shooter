@@ -1,7 +1,5 @@
 package com.zero.ships;
 
-import java.sql.Time;
-
 import box2dLight.Light;
 
 import com.badlogic.gdx.Gdx;

@@ -1,7 +1,6 @@
 package com.zero.spaceshooter.layers;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.zero.spaceshooter.scenes.Node;
 

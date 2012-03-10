@@ -2,10 +2,8 @@ package com.zero.spaceshooter.layers.game;
 
 import java.util.Random;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
 import com.zero.objects.Player;
 import com.zero.spaceshooter.MainDirector;
 import com.zero.spaceshooter.actors.BigAsteroid;

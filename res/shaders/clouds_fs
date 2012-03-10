@@ -1,0 +1,38 @@
+#ifdef GL_ES
+precision lowp float;
+#endif
+
+//Texture coordinates, texture, and position of camera
+varying vec2 v_texCoords;
+uniform sampler2D u_texture;
+uniform vec2 cameraPos;
+
+void main()
+{
+	vec4 outColor;
+	
+	//Warnings when changing varying variable directly
+	vec2 textureCoords = v_texCoords;
+	
+	//invert y axis for camera position
+	textureCoords.y *= -1;
+	
+	//Shift texture point by some camera movement
+	textureCoords.x += cameraPos.x * 0.00025;
+	textureCoords.y += cameraPos.y * 0.00025;
+	textureCoords *= 0.5;
+
+	//get some blue color based on texture alpha
+	outColor = vec4(0, 0, 1, 0.25) * texture2D(u_texture, textureCoords);
+	
+	//Shift a bit more for next level of tint
+	textureCoords.x += cameraPos.x * 0.00025 + 0.25;
+    textureCoords.y += cameraPos.y * 0.00025 - 0.15;
+    textureCoords *= 0.4;
+    
+    //get some red color based on texture alpha
+    outColor += vec4(1, 0, 0, 0.15) * texture2D(u_texture, textureCoords);
+    
+    //output color for pixel
+    gl_FragColor = outColor;
+}	
