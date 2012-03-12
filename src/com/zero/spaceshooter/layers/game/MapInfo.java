@@ -70,6 +70,11 @@ public class MapInfo extends Layer {
 		return stepped;
 	}	
 	
+	public void act(float delta) {
+		super.act(delta);
+		//this.chunk.update();
+	}
+	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha)
 	{
@@ -100,7 +105,7 @@ public class MapInfo extends Layer {
 
 		smallFont.draw(batch, textStringBuilder, 10, Gdx.graphics.getHeight() - 70);
 		
-		Vector2 chunkPos = this.chunk.getChunkId();
+		Vector2 chunkPos = this.chunk.getCentralChunkId();
 		textStringBuilder.setLength(0);
 		textStringBuilder.append("Chunk ID:");
 		textStringBuilder.append(chunkPos.x);

@@ -2,6 +2,7 @@ package com.zero.spaceshooter;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.math.Vector2;
 
 public class MainDesktop {
 
@@ -16,7 +17,13 @@ public class MainDesktop {
 //            settings.maxHeight = 2116;
 //            settings.incremental = false;
 //            TexturePacker.process(settings, "res/textures/packable", "res/atlases");
-
+		/*
+		Vector2 a, b;
+		a = new Vector2(1,0);
+		b = new Vector2(1f,0);
+		boolean zzz = (a.equals(b));   
+		System.out.println(zzz);
+		*/
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.vSyncEnabled = false;
 		config.useCPUSynch = false;

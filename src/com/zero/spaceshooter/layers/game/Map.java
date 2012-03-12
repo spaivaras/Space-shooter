@@ -34,58 +34,11 @@ public class Map extends Layer {
 		randomizer = new Random();
 		randomizer.setSeed(seed);
 		init();
-		initActors();
 	}
 	
 	public void init() {
-		calculateCurentChunk(this.player);
 		
  	}
-	
-	public Vector2 calculateCurentChunk(Player player) {
-		this.playerPos = player.getShip().getPosition();
-		float x_p, y_p;
-		float x_c, y_c;
-		x_p = (Math.abs(this.playerPos.x) - (chunkSize / 2));
-		y_p = (Math.abs(this.playerPos.y) - (chunkSize / 2));
-		if(x_p <= 0) {
-			x_c = 0;
-		} else {
-			x_c = (float) (Math.floor(x_p / chunkSize) +1);
-			if(this.playerPos.x < 0) {
-				x_c *= -1;
-			}
-		}
-		
-		
-		if(y_p <= 0) {
-			y_c = 0;
-		} else {
-			y_c = (float) (Math.floor(y_p / chunkSize) +1);
-			if(this.playerPos.y < 0) {
-				y_c *= -1;
-			}
-		}
-		
-		this.chunkCenter = new Vector2(x_c, y_c);
-		return this.chunkCenter;
-	}
-	
-	public int hash32shift(int key)
-	{
-	  key = ~key + (key << 15); // key = (key << 15) - key - 1;
-	  key = key ^ (key >>> 12);
-	  key = key + (key << 2);
-	  key = key ^ (key >>> 4);
-	  key = key * 2057; // key = (key + (key << 3)) + (key << 11);
-	  key = key ^ (key >>> 16);
-	  return key;
-	}
-
-	public int noise(int x, int y, int seed)
-	{
-	    return hash32shift(seed+hash32shift(x+hash32shift(y)));
-	}
 	
 	public void initActors() {
 		

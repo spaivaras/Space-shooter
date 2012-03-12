@@ -17,6 +17,10 @@ public class Enemy implements ShipController {
 	private WorldObject target;
 	private float shotDelay = 0;
 	
+	public Enemy(float x, float y) {
+		ship = new LightFighter(this, x, y);
+	}
+	
 	public Enemy() {
 		ship = new LightFighter(this, 10, 0);
 		ManagerActor.getInstance().addEntityNext(ship);
