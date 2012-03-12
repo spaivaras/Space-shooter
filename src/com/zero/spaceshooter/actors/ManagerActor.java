@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.sun.xml.internal.stream.Entity;
 import com.zero.ammunition.Ammunition;
 import com.zero.interfaces.EmmiterController;
 import com.zero.interfaces.WorldObject;
@@ -94,7 +95,7 @@ public class ManagerActor extends Actor implements ContactListener {
 	}
 
 	public void update(float delta) {
-
+		
 		Iterator<WorldObject> itr = needsToBeRemoved.iterator(); 
 		while(itr.hasNext()) {
 			WorldObject entity = itr.next(); 
@@ -217,7 +218,13 @@ public class ManagerActor extends Actor implements ContactListener {
 	}
 
 	public void removeEntityNex(WorldObject entity) {
-		needsToBeRemoved.add(entity);
+		if(entities.indexOf(entity) >= 0 ) { 
+			needsToBeRemoved.add(entity);
+		}
+		if(needsToBeAdded.indexOf(entity) >= 0) {
+			System.out.println("check");
+			needsToBeAdded.remove(entity);
+		}
 	}
 
 	@Override

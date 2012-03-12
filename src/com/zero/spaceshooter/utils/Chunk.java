@@ -5,13 +5,15 @@ import java.util.Random;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import sun.java2d.Disposer;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.zero.interfaces.WorldObject;
 import com.zero.objects.Enemy;
 import com.zero.spaceshooter.actors.ManagerActor;
 
-public class Chunk {
+public class Chunk extends Disposer {
 
 	protected float x, y;
 	static public final float CHUNCK_SIZE = 50;
@@ -64,10 +66,7 @@ public class Chunk {
 	
 	protected boolean _loadFromRandom() {
 		Random rnd = new Random();
-		for(int i = 0; i < 2; i++) {
-			//float randomX = this.randomBetwean(this.x0, this.x0 + 10);
-			//float randomY = this.randomBetwean(this.y3, this.y3 + 10);
-			
+		for(int i = 0; i < 5; i++) {
 			entities.add(new Enemy(this.x0 + rnd.nextInt(50), this.y0 + rnd.nextInt(50)).getShip());
 		}
 		return true;
