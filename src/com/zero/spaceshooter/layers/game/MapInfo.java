@@ -72,7 +72,9 @@ public class MapInfo extends Layer {
 	
 	public void act(float delta) {
 		super.act(delta);
-		//this.chunk.update();
+		if(fixedStep(delta)) {
+			this.chunk.update();
+		}
 	}
 	
 	@Override

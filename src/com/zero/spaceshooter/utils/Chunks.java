@@ -105,7 +105,7 @@ public class Chunks {
 	}
 	
 	public void setChunks(Vector2 chunkid) {
-		for(int i =0; i <= 9; i++) {
+		for(int i = 0; i < 9; i++) {
 			Vector2 id = chunkLogic.get(i);
 			Chunk chunk = new Chunk((chunkid.x + id.x) * Chunk.CHUNCK_SIZE, (chunkid.y + id.y) * Chunk.CHUNCK_SIZE);
 			if(i != 0) {
@@ -124,41 +124,107 @@ public class Chunks {
 		newchunk.enter();
 		currentChunks.set(i, newchunk);
 	}
+
 	
+	protected Chunk getNewChunk(int i) {
+		Vector2 id = chunkLogic.get(i);
+		Chunk newchunk = new Chunk((this.chunkId.x + id.x) * Chunk.CHUNCK_SIZE, (this.chunkId.y + id.y) * Chunk.CHUNCK_SIZE);
+		newchunk.enter();
+		return newchunk;
+	}
+	
+	protected void moveTop() {
+		Chunk chunk;
+		for(int i = 0; i < 3; i++) {
+			chunk = currentChunks.get(i);
+			chunk.exit();
+			///currentChunks.remove(chunk);
+		}
+		for(int i = 0; i < 6; i++) {
+			currentChunks.set(i, currentChunks.get(i+3));
+		}
+		
+		for(int i = 6; i < 9; i++) {
+			currentChunks.set(i, this.getNewChunk(i));
+		}
+		
+	}
+	
+	protected void moveLeft() {
+		Chunk chunk;
+		for(int i = 1; i < 4; i++) {
+			chunk = currentChunks.get((i*3)-1);
+			chunk.exit();
+			///currentChunks.remove(chunk);
+		}
+		currentChunks.set(2, currentChunks.get(1));
+		currentChunks.set(1, currentChunks.get(0));
+		
+		currentChunks.set(5, currentChunks.get(4));
+		currentChunks.set(4, currentChunks.get(3));
+		
+		currentChunks.set(8, currentChunks.get(7));
+		currentChunks.set(7, currentChunks.get(6));
+		
+		for(int i = 0; i < 3; i++) {
+			currentChunks.set((i*3), this.getNewChunk((i*3)));
+		}
+		
+	}
+	
+	protected void moveBottom() {
+		Chunk chunk;
+		for(int i = 6; i < 9; i++) {
+			chunk = currentChunks.get(i);
+			chunk.exit();
+			//currentChunks.remove(chunk);
+		}
+		for(int i = 6; i > 0; i--) {
+			currentChunks.set(i+2, currentChunks.get(i-1));
+		}
+		
+		for(int i = 0; i < 3; i++) {
+			currentChunks.set(i, this.getNewChunk(i));
+		}
+	}
+	
+	protected void moveRight() {
+		Chunk chunk;
+		for(int i = 0; i < 3; i++) {
+			chunk = currentChunks.get((i*2));
+			chunk.exit();
+			//currentChunks.remove(chunk);
+		}
+		currentChunks.set(0, currentChunks.get(1));
+		currentChunks.set(1, currentChunks.get(2));
+		
+		currentChunks.set(3, currentChunks.get(4));
+		currentChunks.set(4, currentChunks.get(5));
+		
+		currentChunks.set(6, currentChunks.get(7));
+		currentChunks.set(7, currentChunks.get(8));
+		
+		for(int i = 1; i < 4; i++) {
+			currentChunks.set((i*3)-1, this.getNewChunk((i*3)-1));
+		}
+	}
 	public void update() {
 		if(!lastChunkId.equals(chunkId)) {
 			if(lastChunkId.y == chunkId.y) {
 				if(lastChunkId.x > chunkId.x) {
-					this.replaceChunk(1);
-					this.replaceChunk(4);
-					this.replaceChunk(7);
+					this.moveRight();
 				} else {
-					this.replaceChunk(3);
-					this.replaceChunk(6);
-					this.replaceChunk(9);
+					this.moveLeft();
 				}
 			}
 			
 			if(lastChunkId.x == chunkId.x) {
 				if(lastChunkId.y > chunkId.y) {
-					this.replaceChunk(1);
-					this.replaceChunk(2);
-					this.replaceChunk(3);
+					this.moveTop();
 				} else {
-					this.replaceChunk(7);
-					this.replaceChunk(8);
-					this.replaceChunk(9);
+					this.moveBottom();
 				}
 			}
-			oldChunks.addAll(currentChunks);
-			currentChunks.clear();
-			
-			this.setChunks(chunkId);
-			
-			for(Chunk chunk : oldChunks) {
-				chunk.exit();
-			}
-			oldChunks.clear();
 			lastChunkId = chunkId.cpy();
 		}
 	}
