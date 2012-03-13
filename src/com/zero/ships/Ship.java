@@ -393,8 +393,8 @@ public abstract class Ship implements WorldObject,
 			return;
 		}
 		
-		thrusterSoundId = thrusterSound.play(0.2f);
-		thrusterSound.setPitch(thrusterSoundId, 2f);
+		hitSoundId = hitSound.play(0.2f);
+		hitSound.setPitch(hitSoundId, 2f);
 		
 		controller.shipWasHit(bullet.getGun().getOwner());
 		hitEffect.start();
