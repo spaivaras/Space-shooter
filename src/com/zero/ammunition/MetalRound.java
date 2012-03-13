@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.zero.main.Manager;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 
 public class MetalRound extends Ammunition {
@@ -36,7 +36,7 @@ public class MetalRound extends Ammunition {
 		body = manager.getWorld().createBody(bodyDef);
 	
 		CircleShape shape = new CircleShape();
-		shape.setRadius(8 / Manager.PTM);
+		shape.setRadius(8 / ManagerActor.PTM);
 		  
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;

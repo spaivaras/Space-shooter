@@ -9,6 +9,7 @@ import sun.java2d.Disposer;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.zero.interfaces.Manageable;
 import com.zero.interfaces.WorldObject;
 import com.zero.objects.Enemy;
 import com.zero.spaceshooter.actors.ManagerActor;
@@ -19,7 +20,7 @@ public class Chunk extends Disposer {
 	static public final float CHUNCK_SIZE = 50;
 	protected ArrayList<Vector2> positions = new ArrayList<Vector2>(4);
 	protected float x0,y0, x1,y1, x2,y2, x3,y3;
-	protected ArrayList<WorldObject> entities = new ArrayList<WorldObject>();
+	protected ArrayList<Manageable> entities = new ArrayList<Manageable>();
 	protected ManagerActor manager;
 	
 	public Chunk(Vector2 chunkpos) {
@@ -48,14 +49,14 @@ public class Chunk extends Disposer {
 	
 	public void enter() {
 		this._loadObjects();
-		for (WorldObject entity : entities) {
+		for (Manageable entity : entities) {
 			this.manager.addEntityNext(entity);
 		}
 	}
 	
 	public void exit() {
 		this._saveObjects();
-		for (WorldObject entity : entities) {
+		for (Manageable entity : entities) {
 			this.manager.removeEntityNex(entity);
 		}
 	}
@@ -67,7 +68,7 @@ public class Chunk extends Disposer {
 	protected boolean _loadFromRandom() {
 		Random rnd = new Random();
 		for(int i = 0; i < 5; i++) {
-			entities.add(new Enemy(this.x0 + rnd.nextInt(50), this.y0 + rnd.nextInt(50)).getShip());
+			entities.add(new Enemy(this.x0 + rnd.nextInt(50), this.y0 + rnd.nextInt(50)));
 		}
 		return true;
 	}

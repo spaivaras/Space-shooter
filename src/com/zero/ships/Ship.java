@@ -12,15 +12,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.ammunition.Ammunition;
 import com.zero.guns.Gun;
+import com.zero.interfaces.Cacheable;
 import com.zero.interfaces.EmmiterController;
 import com.zero.interfaces.EnergyHolder;
+import com.zero.interfaces.Manageable;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
+import com.zero.main.ResourceCache;
 import com.zero.spaceshooter.actors.ManagerActor;
 
 
 
-public abstract class Ship implements WorldObject, EnergyHolder, EmmiterController {
+public abstract class Ship implements WorldObject, 
+								EnergyHolder, 
+								EmmiterController,
+								Cacheable, Manageable{
 
 	public static final float FULL_REVOLUTION_RADS = (float)Math.PI * 2;
 	public static final float APPROACH_DISTANCE = 10;
@@ -39,6 +45,7 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	private boolean isHit = false;
 	private boolean isExploding = false;
 	private boolean dummyExplosion = false;
+	private boolean isSleeping = false;
 	
 
 	protected boolean thrustersActive = false;
@@ -50,9 +57,12 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	protected Sound thrusterSound = null;
 	protected Sound boostSound = null;
 	protected Sound deathSound = null;
+	protected Sound hitSound = null;
+	
 	protected long thrusterSoundId = -1;
 	protected long revThrusterSoundId = -1;
 	protected long boostSoundId = -1;
+	protected long hitSoundId = -1;
 	
 	protected Vector2 oldpos;
 	protected float speed = 0f;
@@ -97,13 +107,15 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 		manager = ManagerActor.getInstance();
 		this.loadSounds();
 		hitEffect = new ParticleEffect();
-		hitEffect.load(Gdx.files.internal("res/emmiters/hit.emmiter"), manager.getTextureAtlas("main"));
+		hitEffect.load(Gdx.files.internal("res/emmiters/hit.emmiter"), ResourceCache.getInstance().getTextureAtlas("main"));
 
 		explosionEffect = new ParticleEffect();
-		explosionEffect.load(Gdx.files.internal("res/emmiters/explosion.emmiter"), manager.getTextureAtlas("main"));
+		explosionEffect.load(Gdx.files.internal("res/emmiters/explosion.emmiter"), ResourceCache.getInstance().getTextureAtlas("main"));
 		explosionEffect.start();
 		
 		dummyExplosion = true;
+		
+		hitSound = ResourceCache.getInstance().getSound("hit");
 	}
 
 	public Body getBody() {
@@ -148,6 +160,9 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	
 	@Override
 	public void draw() {
+		if (isSleeping) {
+			return;
+		}
 		//drawEmmiters();
 		if (isAlive) {
 			Sprite drawSprite;
@@ -189,6 +204,10 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 
 	@Override
 	public void update(float delta) {
+		if (isSleeping) {
+			return;
+		}
+		
 		if (body == null && !manager.getWorld().isLocked() && isAlive) {
 			createPhysicsBody();
 			if (body != null) {
@@ -351,16 +370,12 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 			mainLight.setActive(false);
 			removeCustomLights();
 		}
-		
-		thrusterSound.dispose();
-		boostSound.dispose();
 		disposeGuns();
 		
 		if (explosionEffect.isComplete()) {
 			if (body != null && !manager.getWorld().isLocked()) { 
 				manager.getWorld().destroyBody(body);
 				mainLight.remove();
-				deathSound.dispose();
 				return true;
 			}
 		}
@@ -369,7 +384,6 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 
 	@Override
 	public boolean collision(WorldObject with) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -379,7 +393,9 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 			return;
 		}
 		
-		manager.playSound("hit", 2f, 0.2f, false);
+		thrusterSoundId = thrusterSound.play(0.2f);
+		thrusterSound.setPitch(thrusterSoundId, 2f);
+		
 		controller.shipWasHit(bullet.getGun().getOwner());
 		hitEffect.start();
 		isHit = true;
@@ -436,7 +452,28 @@ public abstract class Ship implements WorldObject, EnergyHolder, EmmiterControll
 	}
 	
 	public Vector2 getPosition() {
-		
 		return new Vector2(homeX, homeY);
+	}
+	
+	@Override
+	public void prepareForCache() {
+		isSleeping = true;
+		body.setActive(false);
+		if (mainLight != null && mainLight.isActive()) {
+			mainLight.setActive(false);
+			removeCustomLights();
+		}
+		controller = null;
+	}
+
+	@Override
+	public void reuse() {
+		isSleeping = false;
+		body.setActive(true);
+		createLight();
+	}
+	
+	public void setShipController(ShipController controller) {
+		this.controller = controller;
 	}
 }

@@ -4,26 +4,43 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.zero.interfaces.Manageable;
 import com.zero.interfaces.ShipController;
 import com.zero.interfaces.WorldObject;
+import com.zero.main.WorldObjectPool;
 import com.zero.ships.LightFighter;
 import com.zero.ships.Ship;
 import com.zero.spaceshooter.actors.ManagerActor;
 
-public class Enemy implements ShipController {
+public class Enemy implements ShipController, Manageable {
 	private static final float SHOT_DELAY = 0.8f;
 	
 	private Ship ship = null;
 	private WorldObject target;
 	private float shotDelay = 0;
 	
+	private float shipStartX = 0;
+	private float shipStartY = 10;
+	
 	public Enemy(float x, float y) {
-		ship = new LightFighter(this, x, y);
+		shipStartX = x;
+		shipStartY = y;
+		prepareShip();
+	}
+	public Enemy() {
+		prepareShip();
 	}
 	
-	public Enemy() {
-		ship = new LightFighter(this, 10, 0);
-		ManagerActor.getInstance().addEntityNext(ship);
+	private void prepareShip() {
+		
+		ship = (Ship)WorldObjectPool.getInstance().reuse("Light-fighter");
+		if (ship == null) {
+			ship = new LightFighter(this, shipStartX, shipStartY);
+			ManagerActor.getInstance().addEntityNext(ship);
+		} else {
+			ship.getBody().setTransform(shipStartX, shipStartY, ship.getBody().getAngle());
+			ship.setShipController(this);
+		}	
 	}
 	
 	public void update(float delta) {
@@ -93,7 +110,12 @@ public class Enemy implements ShipController {
 		float value = Math.min(min, max) + rnd.nextInt((int)Math.abs(min - (-max)));
 		return value;
 	}
-	
+
+	@Override
+	public boolean dispose() {
+		WorldObjectPool.getInstance().cache(ship);
+		return true;
+	}
 }
 
 

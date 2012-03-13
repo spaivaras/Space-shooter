@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.zero.guns.Gun;
+import com.zero.interfaces.Manageable;
 import com.zero.interfaces.WorldObject;
+import com.zero.main.ResourceCache;
 import com.zero.spaceshooter.actors.ManagerActor;
 
-public abstract class Ammunition implements WorldObject {
+public abstract class Ammunition implements WorldObject, Manageable {
 	
 	public static short COLLISION_BITS = 0x0008; 
 	
@@ -57,7 +59,7 @@ public abstract class Ammunition implements WorldObject {
 	}
 	
 	protected void createSprite() {
-		TextureAtlas atlas =  manager.getTextureAtlas("ammunition");
+		TextureAtlas atlas =  ResourceCache.getInstance().getTextureAtlas("main");
 		sprite = atlas.createSprite(this.getTextureName());
 	}
 	

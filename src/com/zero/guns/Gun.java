@@ -59,9 +59,6 @@ public abstract class Gun implements Disposable {
 	}
 	
 	public void dispose() {
-		if (shotSound != null) {
-			shotSound.dispose();
-		}
 	} 
 	
 	public void update(float delta) {

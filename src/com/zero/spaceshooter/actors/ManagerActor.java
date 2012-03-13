@@ -1,17 +1,14 @@
 package com.zero.spaceshooter.actors;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.collision.Ray;
@@ -22,11 +19,10 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.sun.xml.internal.stream.Entity;
 import com.zero.ammunition.Ammunition;
 import com.zero.interfaces.EmmiterController;
+import com.zero.interfaces.Manageable;
 import com.zero.interfaces.WorldObject;
-import com.zero.main.Manager;
 import com.zero.main.Map;
 
 
@@ -37,10 +33,9 @@ public class ManagerActor extends Actor implements ContactListener {
 	public static final float CAMERA_EDGE = 6f;
 
 	private static ManagerActor manager;
-	private ArrayList<WorldObject> entities = new ArrayList<WorldObject>();
-	private ArrayList<WorldObject> needsToBeRemoved = new ArrayList<WorldObject>();
-	private ArrayList<WorldObject> needsToBeAdded = new ArrayList<WorldObject>();
-	private HashMap<String, Sound> sounds;
+	private ArrayList<Manageable> entities = new ArrayList<Manageable>(100);
+	private ArrayList<Manageable> needsToBeRemoved = new ArrayList<Manageable>(10);
+	private ArrayList<Manageable> needsToBeAdded = new ArrayList<Manageable>(10);
 
 	protected World world = null;
 	protected SpriteBatch batch = null;
@@ -49,15 +44,11 @@ public class ManagerActor extends Actor implements ContactListener {
 	protected OrthographicCamera noZoomCamera;
 	protected WorldObject cameraController;
 
-	protected TextureAtlas mainAtlas;
-
 	protected Map _map;
 	private Texture texture;       
 	private TextureRegion[] regions = new TextureRegion[4]; // #2
 
 	private ManagerActor() {
-		loadSounds();
-		loadAtlases();
 		createCameras();
 	}
 
@@ -70,7 +61,7 @@ public class ManagerActor extends Actor implements ContactListener {
 		this._map = map;
 	}
 	
-	public ArrayList<WorldObject> test() {
+	public ArrayList<Manageable> test() {
 		return this.entities;
 	}
 	
@@ -80,14 +71,16 @@ public class ManagerActor extends Actor implements ContactListener {
 
 
 	public void render(SpriteBatch batch, float parentAlpha) {
-		for (WorldObject entity : entities) {
-			entity.draw();
+		for (Manageable entity : entities) {
+			if (entity instanceof WorldObject) {
+				((WorldObject)entity).draw();
+			}
 		}
 	}
 	
 	public void renderEmmiters(SpriteBatch batch, float parentAlpha) {
 		
-		for (WorldObject entity : entities) {
+		for (Manageable entity : entities) {
 			if (entity instanceof EmmiterController) {
 				((EmmiterController) entity).drawEmmiters();
 			}
@@ -96,49 +89,31 @@ public class ManagerActor extends Actor implements ContactListener {
 
 	public void update(float delta) {
 		
-		Iterator<WorldObject> itr = needsToBeRemoved.iterator(); 
+		Iterator<Manageable> itr = needsToBeRemoved.iterator(); 
 		while(itr.hasNext()) {
-			WorldObject entity = itr.next(); 
+			Manageable entity = itr.next(); 
 			if (entity.dispose()) {
 				entities.remove(entity);
 				itr.remove();
 			}
 		} 
 
-		if(!world.isLocked()) {
-			itr = needsToBeAdded.iterator(); 
-			while(itr.hasNext()) {
-				WorldObject entity = itr.next(); 
+		itr = needsToBeAdded.iterator(); 
+		while(itr.hasNext()) {
+			Manageable entity = itr.next(); 
+			if (entity instanceof WorldObject) {
+				if(!world.isLocked()) {
+					entities.add(entity);
+					itr.remove();
+				}
+			} else {
 				entities.add(entity);
 				itr.remove();
 			}
 		}
-
-		for (WorldObject entity : entities) {
+		
+		for (Manageable entity : entities) {
 			entity.update(delta);
-		}
-	}
-
-	public Sound playSound(String key, float pitch, float gain, boolean loop) {
-		Sound temp = sounds.get(key);
-
-		if (temp != null) {
-			long id;
-			if (loop) {
-				id = temp.loop(gain);
-			} else {
-				id = temp.play(gain);
-			}
-			temp.setPitch(id, pitch);
-		}
-
-		return temp;
-	}
-
-	public void stopSound(String key) {
-		Sound temp = sounds.get(key);
-		if (temp != null) {
-			temp.stop();
 		}
 	}
 
@@ -176,16 +151,6 @@ public class ManagerActor extends Actor implements ContactListener {
 		return center;
 	}
 
-	private void loadSounds() {
-		sounds = new HashMap<String, Sound>();
-		Sound hit = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/hit.ogg"));
-		sounds.put("hit", hit);
-	}
-	
-	private void loadAtlases() {
-		mainAtlas =  new TextureAtlas(Gdx.files.internal("res/atlases/pack"));
-	}
-
 	@Override
 	public void beginContact(Contact contact) {
 		Body a = contact.getFixtureA().getBody();
@@ -213,11 +178,11 @@ public class ManagerActor extends Actor implements ContactListener {
 		}
 	}
 
-	public void addEntityNext(WorldObject entity) {
+	public void addEntityNext(Manageable entity) {
 		needsToBeAdded.add(entity);
 	}
 
-	public void removeEntityNex(WorldObject entity) {
+	public void removeEntityNex(Manageable entity) {
 		if(entities.indexOf(entity) >= 0 ) { 
 			needsToBeRemoved.add(entity);
 		}
@@ -269,7 +234,7 @@ public class ManagerActor extends Actor implements ContactListener {
 	private void createCameras() {
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(0, 0, 0);
-		camera.zoom = 1f / (float)Manager.PTM;
+		camera.zoom = 1f / (float)ManagerActor.PTM;
 		
 		noZoomCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		noZoomCamera.position.set(0,0, 0);
@@ -330,14 +295,6 @@ public class ManagerActor extends Actor implements ContactListener {
 		} else {
 			return noZoomCamera;
 		}
-	}
-	
-	public TextureAtlas getTextureAtlas(String name) {
-		return mainAtlas;
-	}
-
-	public void setTextureAtlas(TextureAtlas atlas, String name) {
-		this.mainAtlas = atlas;
 	}
 
 	public void act(float delta) {

@@ -7,8 +7,6 @@ import box2dLight.ConeLight;
 import box2dLight.Light;
 import box2dLight.PointLight;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,6 +19,7 @@ import com.zero.guns.RaptorLaser;
 import com.zero.guns.RepeaterLaser;
 import com.zero.interfaces.ShipController;
 import com.zero.main.PolygonParser;
+import com.zero.main.ResourceCache;
 
 public class LightFighter extends Ship {
 	
@@ -101,9 +100,9 @@ public class LightFighter extends Ship {
 	}
 	
 	protected void loadSounds() {
-		thrusterSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/thrust.ogg"));
-		boostSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/turbo.ogg"));
-		deathSound = (Sound) Gdx.audio.newSound(Gdx.files.internal("res/sounds/death.wav"));
+		thrusterSound = ResourceCache.getInstance().getSound("thrust");
+		boostSound = ResourceCache.getInstance().getSound("turbo");
+		deathSound = ResourceCache.getInstance().getSound("death");
 	}
 	
 	@Override
@@ -114,7 +113,6 @@ public class LightFighter extends Ship {
 				energyLevel = 100;
 			}
 		}
-
 	}
 
 	@Override
@@ -129,8 +127,8 @@ public class LightFighter extends Ship {
 		bodyDef.type = BodyType.DynamicBody;
 		body = manager.getWorld().createBody(bodyDef);
 		
-		PolygonParser pp = new PolygonParser();
-		pp.parseEntity(NAME, body, controller.getCollisionBits());
+		PolygonParser pp = ResourceCache.getInstance().getPolygonParser(NAME);
+		pp.atachFixtures(body, controller.getCollisionBits());
 		
         body.setLinearDamping(0.6f);
 		body.setAngularDamping(0.9f);
@@ -158,7 +156,7 @@ public class LightFighter extends Ship {
 	}
 
 	private void prepareSprites() {
-		TextureRegion region = manager.getTextureAtlas("main").findRegion(TEXTURE_REGION);
+		TextureRegion region = ResourceCache.getInstance().getTextureAtlas("main").findRegion(TEXTURE_REGION);
 		TextureRegion[][] tmp = region.split(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		int index = 0;
         
@@ -233,12 +231,6 @@ public class LightFighter extends Ship {
 
 	@Override
 	protected void stopRevThrusterSound() {
-		if (revThrusterSoundId == -1) {
-			return;
-		}
-		
-		thrusterSound.stop(revThrusterSoundId);
-		revThrusterSoundId = -1;
 	}
 	
 	@Override
@@ -300,5 +292,10 @@ public class LightFighter extends Ship {
 		} 
 		
 		arsenal.clear();
+	}
+	
+	@Override
+	public String getCacheIdentifier() {
+		return "Light-fighter";
 	}
 }

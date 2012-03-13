@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.zero.main.Manager;
 import com.zero.shaders.ShaderRenderer;
 import com.zero.spaceshooter.actors.ManagerActor;
 import com.zero.spaceshooter.layers.Layer;
@@ -73,7 +72,7 @@ public class StarField extends Layer {
 
 		//Get initial position of main camera (used to determine how much camera was moved)
 		Vector2 tempPosition = getCameraPosition();
-		tempPosition.mul(1f / Manager.PTM);
+		tempPosition.mul(1f / ManagerActor.PTM);
 		Reset(tempPosition);
 
 		shaderRenderer = new ShaderRenderer("clouds_vs", "clouds_fs");
@@ -89,7 +88,7 @@ public class StarField extends Layer {
 		//Calculate camera movement
 		lastPosition.set(position);
 		position.set(getCameraPosition());
-		position.mul(1f / Manager.PTM);
+		position.mul(1f / ManagerActor.PTM);
 
 		//Render last batch and set custom shaders;	
 		batch.end();

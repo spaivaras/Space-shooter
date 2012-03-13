@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.zero.main.Manager;
+import com.zero.spaceshooter.actors.ManagerActor;
 
 
 public class Beam extends Ammunition {
@@ -27,8 +27,8 @@ public class Beam extends Ammunition {
 	
 		PolygonShape shape = new PolygonShape();
 		
-		Float halfX = (float)sprite.getWidth() / Manager.PTM / 2;
-		Float halfY = (float)sprite.getHeight() / Manager.PTM / 2;
+		Float halfX = (float)sprite.getWidth() / ManagerActor.PTM / 2;
+		Float halfY = (float)sprite.getHeight() / ManagerActor.PTM / 2;
 		
 		shape.setAsBox(halfX, halfY);
 		  
